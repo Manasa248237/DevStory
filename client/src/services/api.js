@@ -2,7 +2,10 @@
  * Centralized API Client Service
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+// Adapts dynamically: uses VITE_API_BASE_URL if configured, otherwise falls back to /api in production and localhost:5000 in dev
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.MODE === "production" ? "/api" : "http://localhost:5000/api");
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("devstory_token");
