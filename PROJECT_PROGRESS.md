@@ -1,0 +1,98 @@
+# DevStory | Project Progress Tracker
+
+---
+
+## 📊 Phase Status Overview
+
+| Phase | Description | Status |
+| :--- | :--- | :--- |
+| **Phase 1** | Project Setup & Architecture | ✅ **Completed & Verified** |
+| **Phase 2** | Frontend Foundation (React 19 + Tailwind + Router) | ✅ **Completed & Verified** |
+| **Phase 3** | Backend & MongoDB Atlas Setup (Express + Mongoose) | ✅ **Completed & Verified** |
+| **Phase 4** | User Authentication (JWT + bcrypt + Protected Routes) | ✅ **Completed & Verified** |
+| **Phase 5** | Blog Article Management (CRUD + MVC + Real React UI) | ✅ **Completed & Verified** |
+| **Phase 6** | Search, Filtering & Pagination | ⏳ *Next Phase* |
+| **Phase 7** | Comments, Likes & Bookmarks | ⏳ *Pending* |
+| **Phase 8** | Admin Dashboard & Role-based Access | ⏳ *Pending* |
+| **Phase 9** | Advanced Features | ⏳ *Pending* |
+| **Phase 10** | Testing & Final Documentation | ⏳ *Pending* |
+
+---
+
+## 🚀 Phase 4 Implementation Summary
+
+### 1. Files Created & Updated
+- `server/models/User.js`: Mongoose user schema with validation, pre-save `bcrypt` hashing hook, `comparePassword()` method, and `generateAuthToken()` JWT method.
+- `server/middleware/authMiddleware.js`: `protect` middleware verifying Bearer tokens and `adminOnly` role guard.
+- `server/controllers/authController.js`: `signup`, `signin`, and `getMe` handlers with input validation and password exclusion in safe responses.
+- `server/routes/authRoutes.js`: Mounted `POST /signup`, `POST /signin`, and protected `GET /me`.
+- `server/.env`: Added `JWT_SECRET` and `JWT_EXPIRES_IN`.
+- `client/src/services/api.js`: Centralized API client with automatic `Authorization: Bearer <token>` attachment.
+- `client/src/context/AuthContext.jsx`: React Context providing `user`, `token`, `isAuthenticated`, `isAdmin`, `login`, `signup`, and `logout`.
+- `client/src/pages/LoginPage.jsx`: Real backend integration with `useAuth().login` and error handling.
+- `client/src/pages/SignupPage.jsx`: Real backend integration with `useAuth().signup` and error handling.
+- `client/src/components/Navbar.jsx`: Dynamic user badge, initial avatar, and sign out button for authenticated users.
+- `client/src/routes/ProtectedRoute.jsx`: Client-side route guard checking authentication and admin permissions.
+- `client/src/App.jsx`: Wrapped application with `<AuthProvider>`.
+
+### 2. Dependencies Installed
+```bash
+# Server Auth Dependencies
+npm install bcryptjs jsonwebtoken
+```
+
+### 3. API Endpoints Verified
+
+| Method | Endpoint | Auth | Tested Status | Actual Result |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/signup` | Public | 400 Bad Request | `{ "success": false, "message": "Please provide all required fields..." }` |
+| `POST` | `/api/auth/signin` | Public | 400 Bad Request | `{ "success": false, "message": "Please provide both email and password." }` |
+| `GET`  | `/api/auth/me`     | Private | 401 Unauthorized | `{ "success": false, "message": "Authentication required. Please provide a valid Bearer token." }` |
+
+## 🚀 Phase 5 Implementation Summary
+
+### 1. Files Created & Updated
+- `server/models/Article.js`: Complete Article Mongoose schema with `title`, unique `slug`, `content`, `excerpt`, `thumbnail`, `category`, `tags`, `author` (ref: User), `status` (`draft` | `published`), `viewCount`, and timestamps. Includes auto-slug generator pre-validate hook with duplicate counter collision avoidance.
+- `server/controllers/articleController.js`: Full CRUD controller methods (`createArticle`, `getAllArticles`, `getArticleByIdOrSlug`, `updateArticle`, `deleteArticle`, `getMyArticles`) with ownership & admin role checks, atomic view count increments, and populated author info.
+- `server/routes/articleRoutes.js`: Clean REST endpoints (`GET /`, `GET /:idOrSlug`, `POST /`, `PUT /:idOrSlug`, `DELETE /:idOrSlug`, `GET /my-articles`) with JWT authorization middleware and correct route precedence.
+- `client/src/services/api.js`: Added `articleApi` helper object for all CRUD operations, leveraging existing auto-Bearer token logic.
+- `client/src/pages/HomePage.jsx`: Live backend integration fetching recent published articles with loading and error states.
+- `client/src/pages/ArticlesPage.jsx`: Live backend integration displaying all published stories with interactive category filtering.
+- `client/src/pages/ArticleDetailPage.jsx`: Full reader view with dynamic slug/ID routing, author profile cards, view count tracking, and author/admin edit & delete dialogs.
+- `client/src/pages/CreateArticlePage.jsx`: Article creation studio with real-time excerpt calculation, category selection, tags, and draft/published mode.
+- `client/src/pages/EditArticlePage.jsx`: Article editor pre-populated from backend with permission verification and change submission.
+- `client/src/pages/MyArticlesPage.jsx`: Personal author dashboard listing all published and draft articles with quick edit and deletion.
+- `client/src/components/ArticleCard.jsx`: Real data display with formatted publication dates, author avatar, views, and draft badge.
+- `client/src/components/Navbar.jsx`: Added "Write" and "My Articles" navigation items for authenticated users.
+- `client/src/routes/AppRoutes.jsx`: Registered all public and protected article routes.
+
+### 2. API Endpoints Verified
+
+| Method | Endpoint | Access | Functionality | Verified Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `GET` | `/api/articles` | Public | List all published articles (filter by category) | `200 OK` |
+| `GET` | `/api/articles/:idOrSlug` | Public / Author | Get single article by ID or slug (+ view count) | `200 OK` |
+| `POST` | `/api/articles` | Authenticated | Create new draft or published article | `201 Created` |
+| `PUT` | `/api/articles/:idOrSlug` | Author / Admin | Update owned article (or any if admin) | `200 OK` |
+| `DELETE` | `/api/articles/:idOrSlug` | Author / Admin | Delete owned article (or any if admin) | `200 OK` |
+| `GET` | `/api/articles/my-articles` | Authenticated | Fetch current user's articles (including drafts) | `200 OK` |
+
+---
+
+## 🧪 Verification Log
+- **Backend Test Suite:** Executed all 13 test cases via `test_phase5_runner.js`:
+  1. Server Health & Database Connection (`200 OK`)
+  2. Author Registration & JWT Token generation (`201 Created`)
+  3. Reader Registration & JWT Token generation (`201 Created`)
+  4. Unauthenticated Article Creation rejection (`401 Unauthorized`)
+  5. Author Article Creation with auto-slug (`201 Created`)
+  6. Public Article Listing (`200 OK`)
+  7. Public Article Detail & View Counter Increment (`200 OK`)
+  8. Unauthorized Update Rejection (`403 Forbidden`)
+  9. Author Update Own Article (`200 OK`)
+  10. Draft Article Privacy Test (Hidden from public `404`, visible in `/my-articles`)
+  11. Unauthorized Deletion Rejection (`403 Forbidden`)
+  12. Author Deletion of Own Article (`200 OK`)
+  13. Deleted Article Verification (`404 Not Found`)
+- **Frontend Build Test:** Executed `npm run build` in `client/` — 47 modules transformed cleanly in 296ms with 0 errors.
+
