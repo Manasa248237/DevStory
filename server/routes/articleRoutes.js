@@ -17,6 +17,12 @@ import {
   getArticleLikeStatus,
   toggleArticleLike,
 } from "../controllers/likeController.js";
+import {
+  bookmarkArticle,
+  unbookmarkArticle,
+  getArticleBookmarkStatus,
+  toggleArticleBookmark,
+} from "../controllers/bookmarkController.js";
 import { protect, optionalAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -36,6 +42,12 @@ router.get("/:id/likes", optionalAuth, getArticleLikeStatus);
 router.post("/:id/like", protect, likeArticle);
 router.delete("/:id/like", protect, unlikeArticle);
 router.post("/:id/like/toggle", protect, toggleArticleLike);
+
+// Bookmarks sub-routes mounted under /api/articles/:id/bookmark...
+router.get("/:id/bookmark-status", protect, getArticleBookmarkStatus);
+router.post("/:id/bookmark", protect, bookmarkArticle);
+router.delete("/:id/bookmark", protect, unbookmarkArticle);
+router.post("/:id/bookmark/toggle", protect, toggleArticleBookmark);
 
 // Public / Semi-private route for single article (drafts visible only to author & admin)
 router.get("/:idOrSlug", optionalAuth, getArticleByIdOrSlug);
