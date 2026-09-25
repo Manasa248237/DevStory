@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "node scripts/dev.mjs",
     "start": "node server/server.js",
     "build": "npm run postinstall",
     "postinstall": "cd server && npm install && cd ../client && npm install && npm run build",

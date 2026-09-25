@@ -75,13 +75,13 @@ git clone https://github.com/Manasa248237/DevStory.git
 cd DevStory
 ```
 
-### 3. Backend Setup
+### 3. Install All Dependencies (Root, Server, and Client)
 ```bash
-cd server
-npm install
-cp .env.example .env
+npm run postinstall
 ```
-Update `server/.env` with your configuration:
+
+### 4. Configure Server Environment
+Create or edit `server/.env`:
 ```env
 PORT=5000
 NODE_ENV=development
@@ -89,19 +89,23 @@ MONGODB_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRES_IN=7d
 ```
-Start backend:
-```bash
-npm run dev
-```
-Backend runs at `http://localhost:5000` (Health Check: `http://localhost:5000/api/health`).
 
-### 4. Frontend Setup
+### 5. Start Development (Both Frontend & Backend with 1 Command)
 ```bash
-cd ../client
-npm install
 npm run dev
 ```
-Frontend runs at `http://localhost:5173`.
+* **Frontend**: `http://localhost:5173` (with Vite hot-reload & API proxy)
+* **Backend API**: `http://localhost:5000` (Health Check: `http://localhost:5000/api/health`)
+
+*(Alternatively, you can run them in separate terminals with `npm run server:dev` and `npm run client:dev`)*
+
+### 6. Full-Stack Local Production Preview
+To preview how the application runs when deployed on a unified production server:
+```bash
+npm run build
+npm start
+```
+Open `http://localhost:5000` to access the fullstack app served directly by Express!
 
 ---
 
