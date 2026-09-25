@@ -16,6 +16,8 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
 import SignupPage from "../pages/SignupPage.jsx";
 import ContactPage from "../pages/ContactPage.jsx";
+import AccessDeniedPage from "../pages/AccessDeniedPage.jsx";
+import AdminAuthCheckPage from "../pages/AdminAuthCheckPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage.jsx";
 
 export default function AppRoutes() {
@@ -26,6 +28,8 @@ export default function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/articles" element={<ArticlesPage />} />
+        <Route path="/access-denied" element={<AccessDeniedPage />} />
+
         {/* Protected Routes (Authenticated Users) */}
         <Route element={<ProtectedRoute />}>
           <Route path="/articles/create" element={<CreateArticlePage />} />
@@ -33,6 +37,12 @@ export default function AppRoutes() {
           <Route path="/my-articles" element={<MyArticlesPage />} />
           <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+        </Route>
+
+        {/* Admin Protected Routes (Authenticated Admin Users Only) */}
+        <Route element={<ProtectedRoute adminOnly={true} />}>
+          <Route path="/admin" element={<AdminAuthCheckPage />} />
+          <Route path="/admin/*" element={<AdminAuthCheckPage />} />
         </Route>
 
         {/* Public Dynamic Article Detail Route */}
@@ -49,3 +59,4 @@ export default function AppRoutes() {
     </Routes>
   );
 }
+

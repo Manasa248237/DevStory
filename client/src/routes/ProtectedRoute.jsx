@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import Loading from "../components/Loading.jsx";
+import AccessDeniedPage from "../pages/AccessDeniedPage.jsx";
 
 export default function ProtectedRoute({ children, adminOnly = false }) {
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
@@ -16,8 +17,9 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   }
 
   if (adminOnly && !isAdmin) {
-    return <Navigate to="/" replace />;
+    return <AccessDeniedPage />;
   }
 
   return children ? children : <Outlet />;
 }
+

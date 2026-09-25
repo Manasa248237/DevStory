@@ -208,3 +208,12 @@ export const newsletterApi = {
     }),
 };
 
+// Admin API Helpers
+export const adminApi = {
+  checkAuth: () =>
+    apiRequest("/admin/check-auth", { method: "GET" }),
+  getDashboard: () =>
+    apiRequest("/admin/dashboard", { method: "GET" }),
+};
+
+
