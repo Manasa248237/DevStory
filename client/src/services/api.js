@@ -4,7 +4,13 @@
 
 // Dynamically resolves and normalizes the backend API base URL
 const getBaseUrl = () => {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  // Support all common environment variable naming conventions
+  const envUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_URL ||
+    import.meta.env.VITE_BACKEND_URL ||
+    import.meta.env.VITE_SERVER_URL;
+
   if (envUrl && typeof envUrl === "string" && envUrl.trim() !== "") {
     let clean = envUrl.trim().replace(/\/+$/, ""); // remove trailing slashes
     if (!clean.endsWith("/api")) {
@@ -13,13 +19,16 @@ const getBaseUrl = () => {
     return clean;
   }
 
-  // In production (e.g., Render unified service or reverse proxy)
-  if (import.meta.env.MODE === "production") {
-    return "/api";
+  // Local development or preview on localhost
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+  ) {
+    return "http://localhost:5000/api";
   }
 
-  // Local development default (Vite proxy forwards /api or direct localhost:5000)
-  return "http://localhost:5000/api";
+  // In production on unified service (e.g. Render unified container)
+  return "/api";
 };
 
 const API_BASE_URL = getBaseUrl();

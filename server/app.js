@@ -67,7 +67,7 @@ app.use("/api/bookmarks", bookmarkRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/api/contact", contactRoutes);
+app.use(["/api/contact", "/api/contacts"], contactRoutes);
 
 // 3. Compatibility routes for clients making requests without /api prefix
 app.use("/auth", authRoutes);
@@ -76,7 +76,7 @@ app.use("/users", userRoutes);
 app.use("/bookmarks", bookmarkRoutes);
 app.use("/newsletter", newsletterRoutes);
 app.use("/upload", uploadRoutes);
-app.use("/contact", contactRoutes);
+app.use(["/contact", "/contacts"], contactRoutes);
 
 // 4. Fallback rewriter for non-GET or JSON requests hitting /articles, /users, etc. without /api prefix
 app.use((req, res, next) => {
