@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ArticleCard from "../components/ArticleCard.jsx";
 import Button from "../components/Button.jsx";
 import Loading from "../components/Loading.jsx";
+import NewsletterForm from "../components/NewsletterForm.jsx";
 import { articleApi } from "../services/api.js";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -140,15 +141,8 @@ export default function HomePage() {
           <p className="text-slate-300 text-sm leading-relaxed">
             Get practical tutorials on full-stack architecture, clean code practices, and modern web development delivered directly to your inbox.
           </p>
-          <div className="pt-2 flex flex-col sm:flex-row gap-3 max-w-md">
-            <input
-              type="email"
-              placeholder="Enter your email address"
-              className="px-4 py-3 rounded-lg text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-400 flex-1"
-            />
-            <Button variant="primary" size="md" className="bg-indigo-500 hover:bg-indigo-600">
-              Subscribe
-            </Button>
+          <div className="pt-2">
+            <NewsletterForm source="website_homepage" variant="card" />
           </div>
         </div>
       </section>

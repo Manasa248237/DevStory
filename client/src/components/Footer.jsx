@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import NewsletterForm from "./NewsletterForm.jsx";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -47,20 +48,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Account Links */}
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-200 mb-4">Community</h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link to="/login" className="hover:text-white transition-colors">Sign In</Link>
-              </li>
-              <li>
-                <Link to="/signup" className="hover:text-white transition-colors">Create Account</Link>
-              </li>
-              <li>
-                <span className="text-slate-500 cursor-not-allowed">RSS Feed (Coming soon)</span>
-              </li>
-            </ul>
+          {/* Newsletter Subscription in Footer */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-200 mb-2">Newsletter</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Get our weekly articles and engineering updates delivered directly to your inbox.
+            </p>
+            <NewsletterForm source="website_footer" variant="compact" />
           </div>
         </div>
 

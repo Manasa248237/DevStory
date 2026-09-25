@@ -193,3 +193,18 @@ export const bookmarkApi = {
     apiRequest(`/articles/${articleIdOrSlug}/bookmark/toggle`, { method: "POST" }),
 };
 
+// Newsletter API Helpers
+export const newsletterApi = {
+  subscribe: (email, source = "website_homepage") =>
+    apiRequest("/newsletter/subscribe", {
+      method: "POST",
+      body: JSON.stringify({ email, source }),
+    }),
+
+  unsubscribe: (email) =>
+    apiRequest("/newsletter/unsubscribe", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+};
+
