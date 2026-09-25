@@ -62,6 +62,7 @@ app.use("/api/admin", adminRoutes);
 // 3. Compatibility routes for clients making requests without /api prefix
 app.use("/auth", authRoutes);
 app.use("/health", healthRoutes);
+app.use("/users", userRoutes);
 
 // 4. Fallback rewriter for non-GET or JSON requests hitting /articles, /users, etc. without /api prefix
 app.use((req, res, next) => {

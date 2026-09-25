@@ -1,12 +1,18 @@
 import express from "express";
+import {
+  getUserProfile,
+  updateUserProfile,
+} from "../controllers/userController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/profile", (req, res) => {
-  res.status(501).json({
-    success: false,
-    message: "User Profile API will be implemented in Phase 7: Additional Features.",
-  });
-});
+// Protected profile endpoints
+router.get("/profile", protect, getUserProfile);
+router.put("/profile", protect, updateUserProfile);
+
+// Convenient aliases for /me
+router.get("/me", protect, getUserProfile);
+router.put("/me", protect, updateUserProfile);
 
 export default router;
