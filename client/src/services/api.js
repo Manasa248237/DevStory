@@ -19,15 +19,10 @@ const getBaseUrl = () => {
     return clean;
   }
 
-  // Local development or preview on localhost
-  if (
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-  ) {
-    return "http://localhost:5000/api";
-  }
-
-  // In production on unified service (e.g. Render unified container)
+  // Default to relative "/api", which works seamlessly with:
+  // - Vite dev server proxy (http://localhost:5173/api -> http://localhost:5000/api)
+  // - Vite preview server proxy (http://localhost:4173/api -> http://localhost:5000/api)
+  // - Render unified production server (serves frontend & backend on same origin)
   return "/api";
 };
 
