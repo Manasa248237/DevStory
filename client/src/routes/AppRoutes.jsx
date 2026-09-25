@@ -11,6 +11,7 @@ import ArticleDetailPage from "../pages/ArticleDetailPage.jsx";
 import CreateArticlePage from "../pages/CreateArticlePage.jsx";
 import EditArticlePage from "../pages/EditArticlePage.jsx";
 import MyArticlesPage from "../pages/MyArticlesPage.jsx";
+import BookmarksPage from "../pages/BookmarksPage.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
 import SignupPage from "../pages/SignupPage.jsx";
@@ -30,6 +31,7 @@ export default function AppRoutes() {
           <Route path="/articles/create" element={<CreateArticlePage />} />
           <Route path="/articles/edit/:idOrSlug" element={<EditArticlePage />} />
           <Route path="/my-articles" element={<MyArticlesPage />} />
+          <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
 

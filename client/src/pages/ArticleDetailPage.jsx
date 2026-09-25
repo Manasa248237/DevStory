@@ -7,6 +7,7 @@ import ErrorMessage from "../components/ErrorMessage.jsx";
 import Button from "../components/Button.jsx";
 import CommentSection from "../components/CommentSection.jsx";
 import LikeButton from "../components/LikeButton.jsx";
+import BookmarkButton from "../components/BookmarkButton.jsx";
 
 export default function ArticleDetailPage() {
   const { idOrSlug } = useParams();
@@ -150,12 +151,17 @@ export default function ArticleDetailPage() {
             </div>
           </div>
 
-          {/* Actions: Like Button & Author/Admin Buttons */}
-          <div className="flex items-center gap-3 self-end sm:self-auto">
+          {/* Actions: Like Button, Bookmark Button & Author/Admin Buttons */}
+          <div className="flex items-center gap-2.5 self-end sm:self-auto">
             <LikeButton
               articleId={article._id || idOrSlug}
               initialLikesCount={article.likesCount || 0}
               size="md"
+            />
+            <BookmarkButton
+              articleId={article._id || idOrSlug}
+              size="md"
+              showText={true}
             />
 
             {canManage && (

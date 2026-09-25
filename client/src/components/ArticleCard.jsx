@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import LikeButton from "./LikeButton.jsx";
+import BookmarkButton from "./BookmarkButton.jsx";
 
 export default function ArticleCard({ article }) {
   if (!article) return null;
@@ -109,7 +110,7 @@ export default function ArticleCard({ article }) {
           {excerpt}
         </p>
 
-        {/* Footer info: Author, LikeButton and Read More link */}
+        {/* Footer info: Author, LikeButton, BookmarkButton and Read link */}
         <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-auto gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold uppercase shrink-0">
@@ -120,15 +121,19 @@ export default function ArticleCard({ article }) {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <LikeButton
               articleId={slug || _id || id}
               initialLikesCount={likesCount}
               size="sm"
             />
+            <BookmarkButton
+              articleId={slug || _id || id}
+              size="sm"
+            />
             <Link
               to={articlePath}
-              className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 group-hover:translate-x-0.5 transition-all"
+              className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 group-hover:translate-x-0.5 transition-all pl-1"
             >
               <span>Read</span>
               <svg

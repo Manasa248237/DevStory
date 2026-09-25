@@ -76,6 +76,18 @@ export default function Navbar() {
                   My Articles
                 </NavLink>
                 <NavLink
+                  to="/bookmarks"
+                  className={({ isActive }) =>
+                    `px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                      isActive
+                        ? "text-indigo-600 bg-indigo-50/80 font-semibold shadow-xs"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                    }`
+                  }
+                >
+                  Bookmarks
+                </NavLink>
+                <NavLink
                   to="/profile"
                   className={({ isActive }) =>
                     `px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
@@ -98,7 +110,7 @@ export default function Navbar() {
                 <Link to="/articles/create">
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition-all hover:scale-105"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition-all hover:scale-105 cursor-pointer"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
@@ -131,7 +143,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={logout}
-                  className="px-3 py-2 text-xs font-bold text-slate-600 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                  className="px-3 py-2 text-xs font-bold text-slate-600 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
                 >
                   Sign Out
                 </button>
@@ -212,6 +224,19 @@ export default function Navbar() {
                   }
                 >
                   My Articles
+                </NavLink>
+                <NavLink
+                  to="/bookmarks"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `px-3 py-2.5 rounded-lg text-base font-medium transition-colors ${
+                      isActive
+                        ? "text-indigo-600 bg-indigo-50 font-semibold"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                    }`
+                  }
+                >
+                  Bookmarks
                 </NavLink>
                 <NavLink
                   to="/profile"

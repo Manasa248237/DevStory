@@ -175,3 +175,21 @@ export const likeApi = {
     apiRequest(`/articles/${articleIdOrSlug}/like/toggle`, { method: "POST" }),
 };
 
+// Bookmark API Helpers
+export const bookmarkApi = {
+  getUserBookmarks: () =>
+    apiRequest("/bookmarks", { method: "GET" }),
+
+  getBookmarkStatus: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/bookmark-status`, { method: "GET" }),
+
+  bookmark: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/bookmark`, { method: "POST" }),
+
+  unbookmark: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/bookmark`, { method: "DELETE" }),
+
+  toggle: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/bookmark/toggle`, { method: "POST" }),
+};
+
