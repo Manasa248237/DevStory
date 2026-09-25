@@ -1,6 +1,41 @@
 import React from "react";
+import { cva } from "class-variance-authority";
+import { Loader2 } from "lucide-react";
+import { cn } from "../utils/cn.js";
 
-export default function Button({
+const buttonVariants = cva(
+  "inline-flex items-center justify-center font-semibold rounded-xl text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none active:scale-[0.98] cursor-pointer",
+  {
+    variants: {
+      variant: {
+        primary:
+          "bg-indigo-600 text-white hover:bg-indigo-700 dark:hover:bg-indigo-500 shadow-sm shadow-indigo-600/25 hover:shadow-md hover:shadow-indigo-600/35",
+        secondary:
+          "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700/80",
+        outline:
+          "border border-slate-300 dark:border-slate-700 bg-transparent text-slate-700 dark:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white",
+        ghost:
+          "bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white",
+        danger:
+          "bg-rose-600 text-white hover:bg-rose-700 shadow-sm shadow-rose-600/20",
+        gradient:
+          "bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500 shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30",
+      },
+      size: {
+        sm: "h-8 px-3 text-xs gap-1.5 rounded-lg",
+        md: "h-10 px-4 py-2 text-sm gap-2",
+        lg: "h-12 px-6 text-base gap-2.5 rounded-2xl",
+        icon: "h-9 w-9 p-0 rounded-xl",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+    },
+  }
+);
+
+export function Button({
   children,
   variant = "primary",
   size = "md",
@@ -12,66 +47,28 @@ export default function Button({
   className = "",
   ...props
 }) {
-  // Base styling for all buttons
-  const baseStyles =
-    "inline-flex items-center justify-center font-semibold rounded-lg transition-all focus:outline-hidden focus:ring-2 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed select-none active:scale-[0.98]";
-
-  // Size variants
-  const sizeStyles = {
-    sm: "px-3 py-1.5 text-xs gap-1.5",
-    md: "px-4 py-2.5 text-sm gap-2",
-    lg: "px-6 py-3 text-base gap-2.5",
-  };
-
-  // Color & aesthetic variants
-  const variantStyles = {
-    primary:
-      "bg-indigo-600 text-white hover:bg-indigo-700 dark:hover:bg-indigo-500 focus:ring-indigo-500 shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/40",
-    secondary:
-      "bg-slate-800 dark:bg-slate-700 text-white hover:bg-slate-900 dark:hover:bg-slate-600 focus:ring-slate-700 shadow-sm",
-    danger:
-      "bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500 shadow-sm shadow-rose-500/20",
-    outline:
-      "bg-transparent text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:ring-indigo-500",
-    ghost:
-      "bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:ring-slate-400 shadow-none",
-  };
-
-  const widthStyle = fullWidth ? "w-full" : "";
-
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`${baseStyles} ${sizeStyles[size] || sizeStyles.md} ${
-        variantStyles[variant] || variantStyles.primary
-      } ${widthStyle} ${className}`}
+      className={cn(
+        buttonVariants({ variant, size }),
+        fullWidth && "w-full",
+        className
+      )}
       {...props}
     >
-      {loading && (
-        <svg
-          className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          ></circle>
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
+      {loading ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin shrink-0 -ml-1 mr-1.5" />
+          <span>{typeof children === "string" ? "Please wait..." : children}</span>
+        </>
+      ) : (
+        children
       )}
-      {children}
     </button>
   );
 }
+
+export default Button;

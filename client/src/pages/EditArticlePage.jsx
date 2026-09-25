@@ -6,6 +6,8 @@ import Input from "../components/Input.jsx";
 import Button from "../components/Button.jsx";
 import Loading from "../components/Loading.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
+import RichTextEditor from "../components/RichTextEditor.jsx";
+import ImageUpload from "../components/ImageUpload.jsx";
 
 export default function EditArticlePage() {
   const { idOrSlug } = useParams();
@@ -82,6 +84,17 @@ export default function EditArticlePage() {
     if (apiError) setApiError("");
   };
 
+  const handleThumbnailChange = (url) => {
+    setFormData((prev) => ({ ...prev, thumbnail: url }));
+    if (apiError) setApiError("");
+  };
+
+  const handleContentChange = (htmlContent) => {
+    setFormData((prev) => ({ ...prev, content: htmlContent }));
+    if (errors.content) setErrors((prev) => ({ ...prev, content: "" }));
+    if (apiError) setApiError("");
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -91,8 +104,11 @@ export default function EditArticlePage() {
       newErrors.title = "Title must be at least 3 characters long.";
     }
 
-    if (!formData.content.trim()) {
+    const plainTextContent = (formData.content || "").replace(/<[^>]*>/gm, "").trim();
+    if (!plainTextContent) {
       newErrors.content = "Article content cannot be empty.";
+    } else if (plainTextContent.length < 20) {
+      newErrors.content = "Article content should contain at least 20 characters of text.";
     }
 
     setErrors(newErrors);
@@ -217,13 +233,14 @@ export default function EditArticlePage() {
           </div>
         </div>
 
-        {/* Thumbnail URL */}
-        <Input
-          label="Featured Image URL"
+        {/* Featured Image / Thumbnail Upload */}
+        <ImageUpload
+          label="Featured Image / Thumbnail"
           id="article-thumbnail"
-          name="thumbnail"
           value={formData.thumbnail}
-          onChange={handleChange}
+          onChange={handleThumbnailChange}
+          helperText="Upload JPG, PNG, WebP or GIF (max 5MB), or paste a URL."
+          disabled={isSubmitting}
         />
 
         {/* Tags */}
@@ -251,32 +268,18 @@ export default function EditArticlePage() {
           />
         </div>
 
-        {/* Content */}
-        <div className="flex flex-col space-y-1.5">
-          <label htmlFor="article-content" className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            Article Content <span className="text-rose-500">*</span>
-          </label>
-          <textarea
-            id="article-content"
-            name="content"
-            rows={10}
-            value={formData.content}
-            onChange={handleChange}
-            className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 font-mono leading-relaxed focus:outline-hidden ${
-              errors.content
-                ? "border-rose-300 dark:border-rose-800 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 bg-rose-50/30 dark:bg-rose-950/20"
-                : "border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-            }`}
-          />
-          {errors.content && (
-            <p className="text-xs text-rose-600 dark:text-rose-400 font-medium flex items-center gap-1 mt-1">
-              <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{errors.content}</span>
-            </p>
-          )}
-        </div>
+        {/* Rich Text Content */}
+        <RichTextEditor
+          label="Article Content"
+          id="article-content"
+          value={formData.content}
+          onChange={handleContentChange}
+          placeholder="Edit your article content here. Format headings, lists, quotes, and links..."
+          error={errors.content}
+          required
+          minHeight="min-h-[300px]"
+          disabled={isSubmitting}
+        />
 
         {/* Action buttons */}
         <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
@@ -294,6 +297,7 @@ export default function EditArticlePage() {
             variant="primary"
             size="md"
             loading={isSubmitting}
+            disabled={isSubmitting}
           >
             Save Changes
           </Button>

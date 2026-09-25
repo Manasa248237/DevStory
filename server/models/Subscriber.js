@@ -41,9 +41,6 @@ const subscriberSchema = new mongoose.Schema(
   }
 );
 
-// Explicit unique index on email
-subscriberSchema.index({ email: 1 }, { unique: true });
-
 const Subscriber = mongoose.model("Subscriber", subscriberSchema);
 
 export default Subscriber;

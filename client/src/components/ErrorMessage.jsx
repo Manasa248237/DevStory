@@ -1,7 +1,9 @@
 import React from "react";
+import { AlertTriangle, RotateCcw } from "lucide-react";
 import Button from "./Button.jsx";
+import { cn } from "../utils/cn.js";
 
-export default function ErrorMessage({
+export function ErrorMessage({
   title = "Something went wrong",
   message = "An error occurred while loading this section. Please try again.",
   onRetry,
@@ -9,27 +11,33 @@ export default function ErrorMessage({
 }) {
   return (
     <div
-      className={`rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50/70 dark:bg-rose-950/30 p-6 text-slate-800 dark:text-slate-200 ${className}`}
+      className={cn(
+        "rounded-2xl border border-rose-200/90 dark:border-rose-900/60 bg-rose-50/80 dark:bg-rose-950/40 p-6 text-slate-800 dark:text-slate-200 shadow-xs",
+        className
+      )}
       role="alert"
     >
       <div className="flex items-start gap-4">
-        <div className="p-2 bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 rounded-lg shrink-0">
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
+        <div className="p-2.5 bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-400 rounded-xl shrink-0 shadow-xs">
+          <AlertTriangle className="w-5 h-5" />
         </div>
-        <div className="flex-1 space-y-1">
-          <h4 className="text-sm font-bold text-rose-900 dark:text-rose-200">{title}</h4>
-          <p className="text-sm text-rose-700 dark:text-rose-300 leading-relaxed">{message}</p>
+        <div className="flex-1 space-y-1.5">
+          <h4 className="text-sm font-bold text-rose-900 dark:text-rose-200">
+            {title}
+          </h4>
+          <p className="text-sm text-rose-700 dark:text-rose-300 leading-relaxed">
+            {message}
+          </p>
           {onRetry && (
-            <div className="pt-2">
-              <Button size="sm" variant="danger" onClick={onRetry}>
-                Try Again
+            <div className="pt-2.5">
+              <Button
+                size="sm"
+                variant="danger"
+                onClick={onRetry}
+                className="gap-1.5 shadow-xs"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Try Again</span>
               </Button>
             </div>
           )}
@@ -38,3 +46,5 @@ export default function ErrorMessage({
     </div>
   );
 }
+
+export default ErrorMessage;

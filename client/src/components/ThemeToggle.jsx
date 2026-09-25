@@ -1,19 +1,21 @@
 import React from "react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../context/ThemeContext.jsx";
+import { cn } from "../utils/cn.js";
 
-export default function ThemeToggle({ className = "", size = "md" }) {
-  const { theme, isDark, toggleTheme } = useTheme();
+export function ThemeToggle({ className = "", size = "md" }) {
+  const { isDark, toggleTheme } = useTheme();
 
   const sizeStyles = {
-    sm: "p-1.5 w-8 h-8",
-    md: "p-2 w-9 h-9",
-    lg: "p-2.5 w-10 h-10",
+    sm: "h-8 w-8",
+    md: "h-9 w-9",
+    lg: "h-10 w-10",
   };
 
   const iconSizes = {
-    sm: "w-4 h-4",
-    md: "w-4.5 h-4.5",
-    lg: "w-5 h-5",
+    sm: "h-4 w-4",
+    md: "h-4.5 w-4.5",
+    lg: "h-5 w-5",
   };
 
   return (
@@ -22,49 +24,35 @@ export default function ThemeToggle({ className = "", size = "md" }) {
       onClick={toggleTheme}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
       title={`Switch to ${isDark ? "light" : "dark"} mode`}
-      className={`relative inline-flex items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-200/70 dark:hover:bg-slate-700 transition-all duration-200 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/40 cursor-pointer select-none active:scale-95 ${
-        sizeStyles[size] || sizeStyles.md
-      } ${className}`}
+      className={cn(
+        "relative inline-flex items-center justify-center rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-200/80 dark:hover:bg-slate-700/90 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 cursor-pointer select-none active:scale-95 shadow-xs",
+        sizeStyles[size] || sizeStyles.md,
+        className
+      )}
     >
-      {/* Sun Icon (shown in Dark Mode to switch to Light) */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className={`${iconSizes[size] || iconSizes.md} transition-all duration-300 ${
+      {/* Sun Icon (rendered when dark to switch to light) */}
+      <Sun
+        className={cn(
+          iconSizes[size] || iconSizes.md,
+          "transition-all duration-300 transform",
           isDark
             ? "rotate-0 scale-100 text-amber-400 fill-amber-400/20"
             : "-rotate-90 scale-0 absolute text-amber-500"
-        }`}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-        />
-      </svg>
+        )}
+      />
 
-      {/* Moon Icon (shown in Light Mode to switch to Dark) */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className={`${iconSizes[size] || iconSizes.md} transition-all duration-300 ${
+      {/* Moon Icon (rendered when light to switch to dark) */}
+      <Moon
+        className={cn(
+          iconSizes[size] || iconSizes.md,
+          "transition-all duration-300 transform",
           isDark
             ? "rotate-90 scale-0 absolute text-indigo-400"
             : "rotate-0 scale-100 text-indigo-600 fill-indigo-600/10"
-        }`}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-        />
-      </svg>
+        )}
+      />
     </button>
   );
 }
+
+export default ThemeToggle;

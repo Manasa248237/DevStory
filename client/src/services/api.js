@@ -208,6 +208,49 @@ export const newsletterApi = {
     }),
 };
 
+// Upload API Helpers
+export const uploadApi = {
+  uploadImage: async (file) => {
+    const token = localStorage.getItem("devstory_token");
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const headers = {
+      Accept: "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    const cleanEndpoint = "/upload";
+    const url = `${API_BASE_URL}${cleanEndpoint}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: formData,
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const error = new Error(data.message || `Image upload failed with status ${response.status}`);
+        error.status = response.status;
+        error.data = data;
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      if (error.name === "TypeError" && error.message.includes("Failed to fetch")) {
+        throw new Error(
+          "Unable to connect to the backend server for image upload. Please verify the server is running."
+        );
+      }
+      throw error;
+    }
+  },
+};
+
 // Admin API Helpers
 export const adminApi = {
   checkAuth: () =>
@@ -215,5 +258,29 @@ export const adminApi = {
   getDashboard: () =>
     apiRequest("/admin/dashboard", { method: "GET" }),
 };
+
+// Contact Form API Helpers
+export const contactApi = {
+  submit: (contactData) =>
+    apiRequest("/contact", {
+      method: "POST",
+      body: JSON.stringify(contactData),
+    }),
+  getMessages: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return apiRequest(`/contact${query ? `?${query}` : ""}`, { method: "GET" });
+  },
+  getById: (id) =>
+    apiRequest(`/contact/${id}`, { method: "GET" }),
+  updateStatus: (id, status) =>
+    apiRequest(`/contact/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+  deleteMessage: (id) =>
+    apiRequest(`/contact/${id}`, { method: "DELETE" }),
+};
+
+
 
 

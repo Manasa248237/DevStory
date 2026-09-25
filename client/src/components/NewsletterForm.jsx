@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Mail, CheckCircle2, Info, AlertCircle, Send } from "lucide-react";
 import { newsletterApi } from "../services/api.js";
 import Button from "./Button.jsx";
 
@@ -98,7 +99,7 @@ export default function NewsletterForm({
               onChange={handleEmailChange}
               placeholder="Enter your email"
               disabled={isSubmitting}
-              className="w-full px-3.5 py-2 rounded-lg text-xs text-slate-100 bg-slate-800 border border-slate-700 placeholder:text-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-60"
+              className="w-full px-3.5 py-2 rounded-xl text-xs text-slate-100 bg-slate-800/90 border border-slate-700/80 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-60"
             />
           </div>
           <Button
@@ -107,21 +108,23 @@ export default function NewsletterForm({
             size="sm"
             loading={isSubmitting}
             disabled={isSubmitting}
-            className="shrink-0 text-xs px-4"
+            className="shrink-0 text-xs px-3.5 gap-1.5"
           >
-            Subscribe
+            <Send className="w-3 h-3" />
+            <span>Join</span>
           </Button>
         </form>
 
         {validationError && (
           <p className="text-xs text-rose-400 flex items-center gap-1">
+            <AlertCircle className="w-3 h-3 shrink-0" />
             <span>{validationError}</span>
           </p>
         )}
 
         {apiResponse && (
           <div
-            className={`p-2.5 rounded-lg text-xs font-medium flex items-center gap-2 ${
+            className={`p-2.5 rounded-xl text-xs font-medium flex items-center gap-2 ${
               apiResponse.type === "success"
                 ? "bg-emerald-950/60 text-emerald-300 border border-emerald-800/60"
                 : apiResponse.type === "info"
@@ -129,6 +132,13 @@ export default function NewsletterForm({
                 : "bg-rose-950/60 text-rose-300 border border-rose-800/60"
             }`}
           >
+            {apiResponse.type === "success" ? (
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+            ) : apiResponse.type === "info" ? (
+              <Info className="w-3.5 h-3.5 shrink-0 text-indigo-400" />
+            ) : (
+              <AlertCircle className="w-3.5 h-3.5 shrink-0 text-rose-400" />
+            )}
             <span>{apiResponse.message}</span>
           </div>
         )}
@@ -148,7 +158,7 @@ export default function NewsletterForm({
             placeholder="Enter your email address"
             disabled={isSubmitting}
             aria-label="Email address for newsletter"
-            className={`w-full px-4 py-3 rounded-xl text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-hidden focus:ring-2 disabled:bg-slate-100 disabled:cursor-not-allowed transition-all ${
+            className={`w-full px-4 py-3 rounded-2xl text-sm text-slate-900 bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 disabled:bg-slate-100 disabled:cursor-not-allowed transition-all shadow-md ${
               validationError
                 ? "border-2 border-rose-400 focus:ring-rose-400/40"
                 : "focus:ring-indigo-400"
@@ -161,18 +171,17 @@ export default function NewsletterForm({
           size="md"
           loading={isSubmitting}
           disabled={isSubmitting}
-          className="bg-indigo-500 hover:bg-indigo-600 shadow-md py-3 shrink-0"
+          className="bg-indigo-500 hover:bg-indigo-600 shadow-md py-3 px-6 shrink-0 gap-2 rounded-2xl"
         >
-          Subscribe
+          <Send className="w-4 h-4" />
+          <span>Subscribe</span>
         </Button>
       </form>
 
       {/* Validation Error Message */}
       {validationError && (
         <p className="text-xs text-rose-300 font-semibold flex items-center gap-1.5 animate-fadeIn">
-          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{validationError}</span>
         </p>
       )}
@@ -180,7 +189,7 @@ export default function NewsletterForm({
       {/* API Feedback Alert */}
       {apiResponse && (
         <div
-          className={`p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-2.5 max-w-lg shadow-sm animate-fadeIn ${
+          className={`p-3.5 rounded-2xl text-xs sm:text-sm font-medium flex items-center gap-2.5 max-w-lg shadow-sm animate-fadeIn ${
             apiResponse.type === "success"
               ? "bg-emerald-500/20 text-emerald-200 border border-emerald-400/40"
               : apiResponse.type === "info"
@@ -189,17 +198,11 @@ export default function NewsletterForm({
           }`}
         >
           {apiResponse.type === "success" ? (
-            <svg className="w-5 h-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
           ) : apiResponse.type === "info" ? (
-            <svg className="w-5 h-5 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <Info className="w-5 h-5 text-sky-400 shrink-0" />
           ) : (
-            <svg className="w-5 h-5 text-rose-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+            <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
           )}
           <span className="leading-snug">{apiResponse.message}</span>
         </div>

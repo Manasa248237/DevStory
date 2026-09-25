@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { articleApi } from "../services/api.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { sanitizeArticleContent } from "../utils/sanitizeHtml.js";
 import Loading from "../components/Loading.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
 import Button from "../components/Button.jsx";
 import CommentSection from "../components/CommentSection.jsx";
 import LikeButton from "../components/LikeButton.jsx";
 import BookmarkButton from "../components/BookmarkButton.jsx";
+import SocialShare from "../components/SocialShare.jsx";
+import { DEFAULT_ARTICLE_THUMBNAIL } from "../components/ArticleCard.jsx";
+import useDocumentMeta from "../hooks/useDocumentMeta.js";
 
 export default function ArticleDetailPage() {
   const { idOrSlug } = useParams();
@@ -15,11 +19,42 @@ export default function ArticleDetailPage() {
   const navigate = useNavigate();
 
   const [article, setArticle] = useState(null);
+  const [thumbnailSrc, setThumbnailSrc] = useState(DEFAULT_ARTICLE_THUMBNAIL);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+
+  // Dynamic SEO, Open Graph & Twitter metadata
+  useDocumentMeta(
+    article
+      ? {
+          title: article.title,
+          description:
+            article.excerpt ||
+            (article.content ? article.content.replace(/<[^>]*>/gm, " ").trim().slice(0, 160) : ""),
+          url:
+            typeof window !== "undefined"
+              ? `${window.location.origin}/articles/${article.slug || article._id}`
+              : "",
+          image: article.thumbnail || DEFAULT_ARTICLE_THUMBNAIL,
+          type: "article",
+          author: article.author?.name || "DevStory Author",
+          publishedTime: article.createdAt,
+          tags: article.tags,
+        }
+      : {
+          title: "Loading Article...",
+          description: "Reading engineering journal article on DevStory.",
+        }
+  );
+
+  useEffect(() => {
+    if (article) {
+      setThumbnailSrc(article.thumbnail || DEFAULT_ARTICLE_THUMBNAIL);
+    }
+  }, [article?.thumbnail]);
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -87,7 +122,14 @@ export default function ArticleDetailPage() {
       })
     : "Recently";
 
-  const readTime = `${Math.max(1, Math.ceil((article.content?.split(/\s+/).length || 100) / 200))} min read`;
+  // Clean word count for read time estimation
+  const plainText = (article.content || "").replace(/<[^>]*>/gm, " ").trim();
+  const wordCount = plainText ? plainText.split(/\s+/).length : 100;
+  const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+
+  // Detect whether content contains HTML tags
+  const isHtmlContent = /<[a-z][\s\S]*>/i.test(article.content || "");
+  const sanitizedHtml = isHtmlContent ? sanitizeArticleContent(article.content) : "";
 
   return (
     <article className="max-w-4xl mx-auto space-y-10 py-4">
@@ -151,8 +193,8 @@ export default function ArticleDetailPage() {
             </div>
           </div>
 
-          {/* Actions: Like Button, Bookmark Button & Author/Admin Buttons */}
-          <div className="flex items-center gap-2.5 self-end sm:self-auto">
+          {/* Actions: Like Button, Bookmark Button, Share Button & Author/Admin Buttons */}
+          <div className="flex items-center gap-2.5 self-end sm:self-auto flex-wrap">
             <LikeButton
               articleId={article._id || idOrSlug}
               initialLikesCount={article.likesCount || 0}
@@ -162,6 +204,10 @@ export default function ArticleDetailPage() {
               articleId={article._id || idOrSlug}
               size="md"
               showText={true}
+            />
+            <SocialShare
+              article={article}
+              variant="compact"
             />
 
             {canManage && (
@@ -192,23 +238,31 @@ export default function ArticleDetailPage() {
       </header>
 
       {/* Featured Thumbnail */}
-      {article.thumbnail && (
-        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-md">
-          <img
-            src={article.thumbnail}
-            alt={article.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
+      <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-md">
+        <img
+          src={thumbnailSrc}
+          alt={article.title ? `${article.title} cover image` : "Article cover image"}
+          onError={() => setThumbnailSrc(DEFAULT_ARTICLE_THUMBNAIL)}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       {/* Article Body Content */}
-      <div className="prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-base sm:text-lg leading-relaxed space-y-6">
-        {article.content.split("\n\n").map((paragraph, idx) => (
-          <p key={idx} className="whitespace-pre-line leading-relaxed">
-            {paragraph}
-          </p>
-        ))}
+      <div className="prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-base sm:text-lg leading-relaxed">
+        {isHtmlContent ? (
+          <div
+            className="tiptap-content"
+            dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
+          />
+        ) : (
+          <div className="space-y-6">
+            {article.content.split("\n\n").map((paragraph, idx) => (
+              <p key={idx} className="whitespace-pre-line leading-relaxed">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Tags Section */}
@@ -229,6 +283,12 @@ export default function ArticleDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Social Sharing Showcase Banner */}
+      <SocialShare
+        article={article}
+        variant="bar"
+      />
 
       {/* Author Profile Bio Card */}
       {article.author && (
