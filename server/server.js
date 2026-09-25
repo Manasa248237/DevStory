@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -6,8 +5,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables (.env in server directory or project root)
-dotenv.config({ path: path.join(__dirname, ".env") });
-dotenv.config();
+try {
+  const { default: dotenv } = await import("dotenv");
+  dotenv.config({ path: path.join(__dirname, ".env") });
+  dotenv.config();
+} catch (err) {
+  // Graceful fallback if dotenv package is absent or running in cloud environments (Render, Railway, etc.)
+  if (typeof process.loadEnvFile === "function") {
+    try {
+      process.loadEnvFile(path.join(__dirname, ".env"));
+    } catch {}
+    try {
+      process.loadEnvFile();
+    } catch {}
+  }
+}
 
 import app from "./app.js";
 import { connectDB } from "./config/db.js";

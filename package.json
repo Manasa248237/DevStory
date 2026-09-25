@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server/server.js",
-    "build": "cd client && npm install && npm run build",
+    "build": "npm install && cd server && npm install && cd ../client && npm install && npm run build",
     "build:client": "cd client && npm install && npm run build",
     "build:server": "cd server && npm install",
     "build:all": "npm install && cd server && npm install && cd ../client && npm install && npm run build",
