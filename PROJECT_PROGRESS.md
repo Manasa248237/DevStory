@@ -95,4 +95,9 @@ npm install bcryptjs jsonwebtoken
   12. Author Deletion of Own Article (`200 OK`)
   13. Deleted Article Verification (`404 Not Found`)
 - **Frontend Build Test:** Executed `npm run build` in `client/` — 47 modules transformed cleanly in 296ms with 0 errors.
-
+- **Deployment Hardening & Dotenv Resolution:**
+  - Integrated `dotenv` package across `server.js` with root and local fallback resolution.
+  - Added support for both `MONGODB_URI` and `MONGO_URI` in `server/config/db.js`.
+  - Added `"build": "npm install"` in `server/package.json` for standalone backend deployments on cloud hosts (preventing `Missing script: "build"` errors).
+  - Moved Vite and Tailwind build plugins into `client/package.json` `dependencies` to prevent production builds skipping them under `NODE_ENV=production`.
+  - Configured root build script `npm run build` to cleanly build client assets without triggering recursive folder junctions.

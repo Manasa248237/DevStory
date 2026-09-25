@@ -133,8 +133,27 @@ Frontend runs at `http://localhost:5173`.
 
 ## 🚢 Deployment Guide
 
-* **Frontend**: Deploy `client/` to Vercel, Netlify, or Render Static Site (Build command: `npm run build`, Output directory: `dist`). Set `VITE_API_BASE_URL` to your production backend URL.
-* **Backend**: Deploy `server/` to Render, Railway, Heroku, or Fly.io (Build command: `npm install`, Start command: `node server.js`). Add `MONGODB_URI`, `JWT_SECRET`, and `NODE_ENV=production` in environment variables.
+### Option 1: Full-Stack Web Service (Single Service on Render / Railway)
+Deploy the entire repository on Render as a Web Service:
+* **Root Directory**: (Leave blank / root `.`)
+* **Build Command**: `npm run build` *(installs dependencies and builds the Vite frontend into `client/dist`)*
+* **Start Command**: `npm start` *(or `node server/server.js` — serves both API routes and static frontend)*
+* **Environment Variables**:
+  * `MONGODB_URI`: Your MongoDB Atlas connection URI
+  * `JWT_SECRET`: A secure random string for JWT signing
+  * `NODE_ENV`: `production`
+
+### Option 2: Separate Backend & Frontend Deployments
+* **Backend API (Render / Railway / Heroku)**:
+  * **Root Directory**: `server`
+  * **Build Command**: `npm install` *(or `npm run build`)*
+  * **Start Command**: `node server.js`
+  * **Environment Variables**: `MONGODB_URI`, `JWT_SECRET`, `NODE_ENV=production`
+* **Frontend SPA (Vercel / Netlify / Render Static Site)**:
+  * **Root Directory**: `client`
+  * **Build Command**: `npm run build`
+  * **Output Directory**: `dist`
+  * **Environment Variables**: `VITE_API_BASE_URL=https://your-backend-url.onrender.com/api`
 
 ---
 

@@ -4,10 +4,10 @@ import mongoose from "mongoose";
  * Connect to MongoDB Atlas using Mongoose
  */
 export const connectDB = async () => {
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
   if (!uri || uri.includes("your_mongodb_atlas_connection_string")) {
-    console.warn("⚠️  [MongoDB Warning] MONGODB_URI is not configured in server/.env");
+    console.warn("⚠️  [MongoDB Warning] MONGODB_URI / MONGO_URI is not configured in server/.env");
     console.warn("👉 Please set a valid MongoDB Atlas connection string in server/.env to enable database operations.");
     return null;
   }
@@ -27,7 +27,7 @@ export const connectDB = async () => {
  * readyState: 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
  */
 export const getDatabaseStatus = () => {
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || process.env.MONGO_URI;
   if (!uri || uri.includes("your_mongodb_atlas_connection_string")) {
     return "not_configured";
   }
