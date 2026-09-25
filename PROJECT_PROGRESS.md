@@ -11,7 +11,7 @@
 | **Phase 3** | Backend & MongoDB Atlas Setup (Express + Mongoose) | ✅ **Completed & Verified** |
 | **Phase 4** | User Authentication (JWT + bcrypt + Protected Routes) | ✅ **Completed & Verified** |
 | **Phase 5** | Blog Article Management (CRUD + MVC + Real React UI) | ✅ **Completed & Verified** |
-| **Phase 6** | Search, Filtering & Pagination | ⏳ *Next Phase* |
+| **Phase 6** | Search, Filtering & Pagination | ✅ **Completed & Verified** |
 | **Phase 7** | Comments, Likes & Bookmarks | ⏳ *Pending* |
 | **Phase 8** | Admin Dashboard & Role-based Access | ⏳ *Pending* |
 | **Phase 9** | Advanced Features | ⏳ *Pending* |
@@ -101,3 +101,20 @@ npm install bcryptjs jsonwebtoken
   - Added `"build": "npm install"` in `server/package.json` for standalone backend deployments on cloud hosts (preventing `Missing script: "build"` errors).
   - Moved Vite and Tailwind build plugins into `client/package.json` `dependencies` to prevent production builds skipping them under `NODE_ENV=production`.
   - Configured root build script `npm run build` to cleanly build client assets without triggering recursive folder junctions.
+
+---
+
+## 🚀 Phase 6 Implementation Summary: Search, Filtering & Pagination
+
+### 1. Files Created & Updated
+- `server/controllers/articleController.js`: Updated `getAllArticles` with regex search on title, excerpt, and content (sanitized for regex injection), category filtering, parameter normalization/clamping (`page >= 1`, `limit <= 100`), skip/limit queries, and accurate pagination metadata (`total`, `page`, `totalPages`, `limit`, `hasNextPage`, `hasPrevPage`).
+- `client/src/services/api.js`: Updated `articleApi.getAll` to format and serialize `category`, `search`, `page`, and `limit` URLSearchParams.
+- `client/src/components/Pagination.jsx`: Created reusable accessible pagination component with windowed page numbering, next/prev navigation, and total item range indicator.
+- `client/src/pages/ArticlesPage.jsx`: Added debounced search bar with instant clear button, category chips, active filter badges, empty state with filter reset action, and pagination integration with scroll-to-top.
+- `server/test_search_filter_pagination.js`: Created dedicated automated test suite verifying all 45 search, filter, and pagination assertions.
+
+### 2. Verification Results
+- **Search, Filter & Pagination Suite:** 45/45 assertions passed (100%).
+- **CRUD & Authorization Suite:** 18/18 tests passed (100%).
+- **Phase 5 Suite:** 13/13 tests passed (100%).
+- **Frontend Production Build:** Vite production build succeeded in ~314ms with 0 errors.
