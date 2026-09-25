@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import LikeButton from "./LikeButton.jsx";
 
 export default function ArticleCard({ article }) {
   if (!article) return null;
@@ -18,6 +19,7 @@ export default function ArticleCard({ article }) {
     thumbnail = "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80",
     slug,
     viewCount = 0,
+    likesCount = 0,
     status = "published",
   } = article;
 
@@ -107,36 +109,43 @@ export default function ArticleCard({ article }) {
           {excerpt}
         </p>
 
-        {/* Footer info: Author and Read More link */}
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-auto">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold uppercase">
+        {/* Footer info: Author, LikeButton and Read More link */}
+        <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-auto gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold uppercase shrink-0">
               {author?.name ? author.name.charAt(0) : "A"}
             </div>
-            <span className="text-xs font-semibold text-slate-700">
+            <span className="text-xs font-semibold text-slate-700 truncate">
               {author?.name || "Anonymous"}
             </span>
           </div>
 
-          <Link
-            to={articlePath}
-            className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 group-hover:translate-x-0.5 transition-all"
-          >
-            <span>Read Article</span>
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2.5}
+          <div className="flex items-center gap-2 shrink-0">
+            <LikeButton
+              articleId={slug || _id || id}
+              initialLikesCount={likesCount}
+              size="sm"
+            />
+            <Link
+              to={articlePath}
+              className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 group-hover:translate-x-0.5 transition-all"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              />
-            </svg>
-          </Link>
+              <span>Read</span>
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                />
+              </svg>
+            </Link>
+          </div>
         </div>
       </div>
     </article>

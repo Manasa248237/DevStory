@@ -160,3 +160,18 @@ export const commentApi = {
     }),
 };
 
+// Like API Helpers
+export const likeApi = {
+  getLikeStatus: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/likes`, { method: "GET" }),
+
+  like: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/like`, { method: "POST" }),
+
+  unlike: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/like`, { method: "DELETE" }),
+
+  toggle: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/like/toggle`, { method: "POST" }),
+};
+
