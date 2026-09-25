@@ -6,10 +6,11 @@
   "type": "module",
   "scripts": {
     "start": "node server/server.js",
-    "build": "npm install && cd server && npm install && cd ../client && npm install && npm run build",
+    "build": "npm run postinstall",
+    "postinstall": "cd server && npm install && cd ../client && npm install && npm run build",
     "build:client": "cd client && npm install && npm run build",
     "build:server": "cd server && npm install",
-    "build:all": "npm install && cd server && npm install && cd ../client && npm install && npm run build",
+    "build:all": "npm run postinstall",
     "server": "node server/server.js",
     "server:dev": "npm --prefix server run dev",
     "client:dev": "npm --prefix client run dev"
@@ -18,7 +19,7 @@
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "express": "^4.22.3",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.10.2",
     "morgan": "^1.10.0"
