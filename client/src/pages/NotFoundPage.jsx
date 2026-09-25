@@ -5,15 +5,15 @@ import Button from "../components/Button.jsx";
 export default function NotFoundPage() {
   return (
     <div className="text-center py-16 sm:py-24 max-w-lg mx-auto space-y-6">
-      <div className="w-20 h-20 rounded-3xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center mx-auto shadow-xs font-black text-3xl">
+      <div className="w-20 h-20 rounded-3xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 flex items-center justify-center mx-auto shadow-xs font-black text-3xl">
         404
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Page Not Found
         </h1>
-        <p className="text-sm text-slate-500 leading-relaxed">
+        <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
           The page you are looking for doesn't exist, has been moved, or is under construction.
         </p>
       </div>

@@ -120,8 +120,8 @@ export default function LikeButton({
 
   // Visual state styling
   const stateStyles = isLiked
-    ? "bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100 hover:border-rose-300"
-    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300";
+    ? "bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950/60 hover:border-rose-300"
+    : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700";
 
   return (
     <>
@@ -177,7 +177,7 @@ export default function LikeButton({
         </button>
 
         {error && (
-          <span className="absolute top-full left-0 mt-1 text-[11px] text-rose-600 font-medium whitespace-nowrap z-10 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shadow-xs">
+          <span className="absolute top-full left-0 mt-1 text-[11px] text-rose-600 dark:text-rose-400 font-medium whitespace-nowrap z-10 bg-rose-50 dark:bg-rose-950/80 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-900/60 shadow-xs">
             {error}
           </span>
         )}
@@ -190,18 +190,18 @@ export default function LikeButton({
           onClick={() => setShowAuthModal(false)}
         >
           <div
-            className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 text-center space-y-5"
+            className="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-xs">
+            <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto shadow-xs">
               <svg className="w-6 h-6 fill-rose-500" viewBox="0 0 24 24">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-slate-900">Sign in to Like Articles</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Sign in to Like Articles</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 Join DevStory to like your favorite engineering stories, save articles, and interact with the developer community.
               </p>
             </div>
@@ -210,7 +210,7 @@ export default function LikeButton({
               <button
                 type="button"
                 onClick={() => setShowAuthModal(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Cancel
               </button>

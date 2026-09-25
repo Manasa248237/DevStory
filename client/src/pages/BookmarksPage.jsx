@@ -55,18 +55,18 @@ export default function BookmarksPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 py-4">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase tracking-wider">
-            <svg className="w-4 h-4 fill-indigo-600" viewBox="0 0 24 24">
+          <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider">
+            <svg className="w-4 h-4 fill-indigo-600 dark:fill-indigo-400" viewBox="0 0 24 24">
               <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
             </svg>
             Personal Library
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Saved Bookmarks
           </h1>
-          <p className="text-sm sm:text-base text-slate-600">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
             {bookmarks.length === 1
               ? "You have 1 saved article for quick reading."
               : `You have ${bookmarks.length} saved articles in your personal collection.`}
@@ -87,16 +87,16 @@ export default function BookmarksPage() {
 
       {/* Empty State */}
       {bookmarks.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 text-center space-y-6 max-w-2xl mx-auto my-8 shadow-xs">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto shadow-xs">
-            <svg className="w-8 h-8 fill-none text-indigo-600" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 sm:p-12 text-center space-y-6 max-w-2xl mx-auto my-8 shadow-xs">
+          <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto shadow-xs">
+            <svg className="w-8 h-8 fill-none text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
             </svg>
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold text-slate-900">No saved articles yet</h3>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">No saved articles yet</h3>
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
               When you find an article you want to read later, click the bookmark icon on any article card or detail page to save it here.
             </p>
           </div>

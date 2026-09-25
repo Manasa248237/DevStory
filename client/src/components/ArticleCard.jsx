@@ -40,25 +40,25 @@ export default function ArticleCard({ article }) {
     readTime ||
     `${Math.max(1, Math.ceil((content.split(/\s+/).length || 100) / 200))} min read`;
 
-  // Dynamic category badge colors
+  // Dynamic category badge colors with dark mode support
   const categoryColors = {
-    Technology: "bg-cyan-50 text-cyan-700 border-cyan-200",
-    React: "bg-cyan-50 text-cyan-700 border-cyan-200",
-    "Node.js": "bg-emerald-50 text-emerald-700 border-emerald-200",
-    Database: "bg-amber-50 text-amber-700 border-amber-200",
-    Architecture: "bg-purple-50 text-purple-700 border-purple-200",
-    Design: "bg-pink-50 text-pink-700 border-pink-200",
-    Productivity: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    Lifestyle: "bg-orange-50 text-orange-700 border-orange-200",
+    Technology: "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800",
+    React: "bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800",
+    "Node.js": "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    Database: "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+    Architecture: "bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800",
+    Design: "bg-pink-50 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-800",
+    Productivity: "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+    Lifestyle: "bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800",
   };
 
   const badgeClass =
-    categoryColors[category] || "bg-indigo-50 text-indigo-700 border-indigo-200";
+    categoryColors[category] || "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800";
 
   return (
-    <article className="group flex flex-col bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-xl hover:border-slate-300 transition-all duration-300 overflow-hidden">
+    <article className="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 overflow-hidden">
       {/* Featured Thumbnail */}
-      <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+      <div className="relative aspect-video w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
         <img
           src={thumbnail}
           alt={title}
@@ -82,14 +82,14 @@ export default function ArticleCard({ article }) {
       {/* Card Body */}
       <div className="flex flex-col flex-1 p-6">
         {/* Meta Header */}
-        <div className="flex items-center gap-2 text-xs text-slate-500 mb-3 font-medium">
+        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3 font-medium">
           <span>{displayDate}</span>
           <span>•</span>
           <span>{calculatedReadTime}</span>
           {viewCount > 0 && (
             <>
               <span>•</span>
-              <span className="flex items-center gap-0.5 text-slate-400">
+              <span className="flex items-center gap-0.5 text-slate-400 dark:text-slate-500">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -101,22 +101,22 @@ export default function ArticleCard({ article }) {
         </div>
 
         {/* Title */}
-        <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 mb-2.5">
+        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 mb-2.5">
           <Link to={articlePath}>{title}</Link>
         </h3>
 
         {/* Excerpt */}
-        <p className="text-sm text-slate-600 line-clamp-3 leading-relaxed mb-6 flex-1">
+        <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed mb-6 flex-1">
           {excerpt}
         </p>
 
         {/* Footer info: Author, LikeButton, BookmarkButton and Read link */}
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-auto gap-2">
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between mt-auto gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold uppercase shrink-0">
               {author?.name ? author.name.charAt(0) : "A"}
             </div>
-            <span className="text-xs font-semibold text-slate-700 truncate">
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">
               {author?.name || "Anonymous"}
             </span>
           </div>
@@ -133,7 +133,7 @@ export default function ArticleCard({ article }) {
             />
             <Link
               to={articlePath}
-              className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 group-hover:translate-x-0.5 transition-all pl-1"
+              className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 group-hover:translate-x-0.5 transition-all pl-1"
             >
               <span>Read</span>
               <svg

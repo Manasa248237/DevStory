@@ -124,13 +124,13 @@ export default function ArticlesPage() {
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div className="space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/70 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider">
             Explore Stories
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Published Articles
           </h1>
-          <p className="text-slate-600 text-base max-w-2xl leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 text-base max-w-2xl leading-relaxed">
             Discover in-depth engineering guides, web development tutorials, and architectural insights.
           </p>
         </div>
@@ -148,10 +148,10 @@ export default function ArticlesPage() {
       </div>
 
       {/* Search Input Bar */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs">
         <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -163,14 +163,14 @@ export default function ArticlesPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search articles by title, excerpt, or content..."
               aria-label="Search articles"
-              className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50 hover:bg-white transition-all"
+              className="w-full pl-10 pr-10 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-hidden focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800 transition-all"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={handleClearSearch}
                 aria-label="Clear search query"
-                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -192,7 +192,7 @@ export default function ArticlesPage() {
               variant="outline"
               size="md"
               onClick={handleResetFilters}
-              className="shrink-0 text-slate-600 hover:text-slate-900 border-slate-200"
+              className="shrink-0 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700"
             >
               Reset Filters
             </Button>
@@ -200,8 +200,8 @@ export default function ArticlesPage() {
         </form>
 
         {/* Category Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-100 mt-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">
+        <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mr-1">
             Category:
           </span>
           {categories.map((category) => (
@@ -211,8 +211,8 @@ export default function ArticlesPage() {
               onClick={() => handleCategorySelect(category)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 selectedCategory === category
-                  ? "bg-indigo-600 text-white shadow-xs shadow-indigo-600/30 scale-105"
-                  : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
+                  ? "bg-indigo-600 dark:bg-indigo-500 text-white shadow-xs shadow-indigo-600/30 scale-105"
+                  : "bg-slate-100/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white"
               }`}
             >
               {category}
@@ -222,16 +222,16 @@ export default function ArticlesPage() {
 
         {/* Active Filter Summary Indicator */}
         {hasActiveFilters && (
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100 mt-3 text-xs text-slate-500">
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 mt-3 text-xs text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2 flex-wrap">
               <span>Filtering by:</span>
               {selectedCategory !== "All" && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200/60">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200/60 dark:border-indigo-800/60">
                   Category: {selectedCategory}
                   <button
                     type="button"
                     onClick={() => handleCategorySelect("All")}
-                    className="hover:text-indigo-900"
+                    className="hover:text-indigo-900 dark:hover:text-white"
                     aria-label="Remove category filter"
                   >
                     ×
@@ -239,12 +239,12 @@ export default function ArticlesPage() {
                 </span>
               )}
               {activeSearch && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200/60">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-200/60 dark:border-indigo-800/60">
                   Search: "{activeSearch}"
                   <button
                     type="button"
                     onClick={handleClearSearch}
-                    className="hover:text-indigo-900"
+                    className="hover:text-indigo-900 dark:hover:text-white"
                     aria-label="Remove search filter"
                   >
                     ×
@@ -252,7 +252,7 @@ export default function ArticlesPage() {
                 </span>
               )}
               {!isLoading && (
-                <span className="text-slate-400">
+                <span className="text-slate-400 dark:text-slate-500">
                   ({totalArticles} {totalArticles === 1 ? "article" : "articles"} found)
                 </span>
               )}
@@ -261,7 +261,7 @@ export default function ArticlesPage() {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline"
+              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-semibold hover:underline"
             >
               Clear all
             </button>
@@ -297,18 +297,18 @@ export default function ArticlesPage() {
         </div>
       ) : (
         /* Empty State */
-        <div className="text-center py-16 bg-white border border-slate-200/80 rounded-2xl p-8 space-y-4">
-          <div className="w-14 h-14 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+        <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-8 space-y-4">
+          <div className="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mx-auto">
             <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
 
-          <h3 className="text-xl font-bold text-slate-800">
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200">
             {hasActiveFilters ? "No matching articles found" : "No articles available"}
           </h3>
 
-          <p className="text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
             {hasActiveFilters
               ? `We couldn't find any published articles matching your criteria ${
                   activeSearch ? `"${activeSearch}"` : ""

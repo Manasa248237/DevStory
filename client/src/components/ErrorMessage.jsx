@@ -9,11 +9,11 @@ export default function ErrorMessage({
 }) {
   return (
     <div
-      className={`rounded-xl border border-rose-200 bg-rose-50/70 p-6 text-slate-800 ${className}`}
+      className={`rounded-xl border border-rose-200 dark:border-rose-900/50 bg-rose-50/70 dark:bg-rose-950/30 p-6 text-slate-800 dark:text-slate-200 ${className}`}
       role="alert"
     >
       <div className="flex items-start gap-4">
-        <div className="p-2 bg-rose-100 text-rose-600 rounded-lg shrink-0">
+        <div className="p-2 bg-rose-100 dark:bg-rose-900/50 text-rose-600 dark:text-rose-400 rounded-lg shrink-0">
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
@@ -24,8 +24,8 @@ export default function ErrorMessage({
           </svg>
         </div>
         <div className="flex-1 space-y-1">
-          <h4 className="text-sm font-bold text-rose-900">{title}</h4>
-          <p className="text-sm text-rose-700 leading-relaxed">{message}</p>
+          <h4 className="text-sm font-bold text-rose-900 dark:text-rose-200">{title}</h4>
+          <p className="text-sm text-rose-700 dark:text-rose-300 leading-relaxed">{message}</p>
           {onRetry && (
             <div className="pt-2">
               <Button size="sm" variant="danger" onClick={onRetry}>

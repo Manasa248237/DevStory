@@ -109,8 +109,8 @@ export default function BookmarkButton({
 
   // Visual state styling
   const stateStyles = isBookmarked
-    ? "bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300"
-    : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300";
+    ? "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-900/60 text-indigo-700 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-950/60 hover:border-indigo-300"
+    : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700";
 
   return (
     <>
@@ -125,7 +125,7 @@ export default function BookmarkButton({
         >
           {isLoading ? (
             <svg
-              className={`${currentSize.icon} animate-spin text-indigo-600`}
+              className={`${currentSize.icon} animate-spin text-indigo-600 dark:text-indigo-400`}
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -147,7 +147,7 @@ export default function BookmarkButton({
             <svg
               className={`${currentSize.icon} transition-transform duration-200 ${
                 isBookmarked
-                  ? "scale-110 fill-indigo-600 text-indigo-600"
+                  ? "scale-110 fill-indigo-600 dark:fill-indigo-400 text-indigo-600 dark:text-indigo-400"
                   : "fill-none text-current"
               }`}
               viewBox="0 0 24 24"
@@ -166,7 +166,7 @@ export default function BookmarkButton({
         </button>
 
         {error && (
-          <span className="absolute top-full left-0 mt-1 text-[11px] text-rose-600 font-medium whitespace-nowrap z-10 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shadow-xs">
+          <span className="absolute top-full left-0 mt-1 text-[11px] text-rose-600 dark:text-rose-400 font-medium whitespace-nowrap z-10 bg-rose-50 dark:bg-rose-950/80 px-2 py-0.5 rounded-md border border-rose-200 dark:border-rose-900/60 shadow-xs">
             {error}
           </span>
         )}
@@ -179,18 +179,18 @@ export default function BookmarkButton({
           onClick={() => setShowAuthModal(false)}
         >
           <div
-            className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 text-center space-y-5"
+            className="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto shadow-xs">
-              <svg className="w-6 h-6 fill-indigo-600" viewBox="0 0 24 24">
+            <div className="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto shadow-xs">
+              <svg className="w-6 h-6 fill-indigo-600 dark:fill-indigo-400" viewBox="0 0 24 24">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
               </svg>
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-xl font-bold text-slate-900">Sign in to Save Articles</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Sign in to Save Articles</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 Bookmark your favorite articles to easily read them later and keep your personal learning library organized.
               </p>
             </div>
@@ -199,7 +199,7 @@ export default function BookmarkButton({
               <button
                 type="button"
                 onClick={() => setShowAuthModal(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 Cancel
               </button>

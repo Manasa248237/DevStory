@@ -95,11 +95,11 @@ export default function ArticleDetailPage() {
       <header className="space-y-6 text-center sm:text-left">
         {/* Breadcrumb & Category */}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 text-xs font-bold">
-          <Link to="/articles" className="text-slate-500 hover:text-indigo-600 transition-colors">
+          <Link to="/articles" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
             Articles
           </Link>
-          <span className="text-slate-300">/</span>
-          <span className="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 uppercase tracking-wider">
+          <span className="text-slate-300 dark:text-slate-700">/</span>
+          <span className="px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/70 text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
             {article.category}
           </span>
           {article.status === "draft" && (
@@ -110,28 +110,28 @@ export default function ArticleDetailPage() {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.2]">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.2]">
           {article.title}
         </h1>
 
         {/* Excerpt */}
         {article.excerpt && (
-          <p className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-3xl">
+          <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl">
             {article.excerpt}
           </p>
         )}
 
         {/* Meta Bar & Management Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-b border-slate-200 py-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-b border-slate-200 dark:border-slate-800 py-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-bold text-sm uppercase shadow-xs">
               {article.author?.name ? article.author.name.charAt(0) : "A"}
             </div>
             <div>
-              <div className="text-sm font-bold text-slate-900">
+              <div className="text-sm font-bold text-slate-900 dark:text-white">
                 {article.author?.name || "Anonymous Author"}
               </div>
-              <div className="text-xs text-slate-500 flex items-center gap-2">
+              <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
                 <span>{displayDate}</span>
                 <span>•</span>
                 <span>{readTime}</span>
@@ -139,7 +139,7 @@ export default function ArticleDetailPage() {
                   <>
                     <span>•</span>
                     <span className="flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
@@ -165,7 +165,7 @@ export default function ArticleDetailPage() {
             />
 
             {canManage && (
-              <div className="flex items-center gap-2 pl-3 border-l border-slate-200">
+              <div className="flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-slate-800">
                 <Link to={`/articles/edit/${article.slug || article._id}`}>
                   <Button variant="outline" size="sm" className="gap-1">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,7 +193,7 @@ export default function ArticleDetailPage() {
 
       {/* Featured Thumbnail */}
       {article.thumbnail && (
-        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 shadow-md">
+        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-md">
           <img
             src={article.thumbnail}
             alt={article.title}
@@ -203,7 +203,7 @@ export default function ArticleDetailPage() {
       )}
 
       {/* Article Body Content */}
-      <div className="prose prose-slate max-w-none text-slate-800 text-base sm:text-lg leading-relaxed space-y-6">
+      <div className="prose prose-slate dark:prose-invert max-w-none text-slate-800 dark:text-slate-200 text-base sm:text-lg leading-relaxed space-y-6">
         {article.content.split("\n\n").map((paragraph, idx) => (
           <p key={idx} className="whitespace-pre-line leading-relaxed">
             {paragraph}
@@ -213,15 +213,15 @@ export default function ArticleDetailPage() {
 
       {/* Tags Section */}
       {article.tags && article.tags.length > 0 && (
-        <div className="pt-6 border-t border-slate-200">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+        <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
             Article Tags
           </h4>
           <div className="flex flex-wrap gap-2">
             {article.tags.map((tag, i) => (
               <span
                 key={i}
-                className="px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors cursor-default"
+                className="px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-default"
               >
                 #{tag}
               </span>
@@ -232,16 +232,16 @@ export default function ArticleDetailPage() {
 
       {/* Author Profile Bio Card */}
       {article.author && (
-        <div className="p-6 sm:p-8 bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center sm:items-start gap-5">
+        <div className="p-6 sm:p-8 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-center sm:items-start gap-5">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white text-2xl font-black uppercase shrink-0 shadow-sm">
             {article.author.name?.charAt(0)}
           </div>
           <div className="space-y-1.5 text-center sm:text-left flex-1">
-            <div className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+            <div className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
               Written by
             </div>
-            <h3 className="text-xl font-bold text-slate-900">{article.author.name}</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">{article.author.name}</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               {article.author.bio || "Author and contributor at DevStory sharing practical perspectives on modern software engineering."}
             </p>
           </div>
@@ -257,20 +257,20 @@ export default function ArticleDetailPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-5 animate-fadeIn">
-            <div className="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5 animate-fadeIn">
+            <div className="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-bold text-slate-900">Delete this article?</h3>
-              <p className="text-sm text-slate-600">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Delete this article?</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
                 Are you sure you want to delete <strong>"{article.title}"</strong>? This action cannot be undone.
               </p>
             </div>
             {deleteError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-700">
+              <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl text-xs font-semibold text-rose-700 dark:text-rose-300">
                 {deleteError}
               </div>
             )}

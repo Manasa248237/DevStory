@@ -26,15 +26,15 @@ export default function Button({
   // Color & aesthetic variants
   const variantStyles = {
     primary:
-      "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/40",
+      "bg-indigo-600 text-white hover:bg-indigo-700 dark:hover:bg-indigo-500 focus:ring-indigo-500 shadow-sm shadow-indigo-500/20 hover:shadow-indigo-500/40",
     secondary:
-      "bg-slate-800 text-white hover:bg-slate-900 focus:ring-slate-700 shadow-sm",
+      "bg-slate-800 dark:bg-slate-700 text-white hover:bg-slate-900 dark:hover:bg-slate-600 focus:ring-slate-700 shadow-sm",
     danger:
       "bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500 shadow-sm shadow-rose-500/20",
     outline:
-      "bg-transparent text-slate-700 border border-slate-300 hover:bg-slate-50 focus:ring-indigo-500",
+      "bg-transparent text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/80 focus:ring-indigo-500",
     ghost:
-      "bg-transparent text-slate-700 hover:bg-slate-100 focus:ring-slate-400 shadow-none",
+      "bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:ring-slate-400 shadow-none",
   };
 
   const widthStyle = fullWidth ? "w-full" : "";
