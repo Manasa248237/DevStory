@@ -1,7 +1,23 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
+import {
+  Shield,
+  Plus,
+  FileText,
+  Mail,
+  Key,
+  CheckCircle2,
+  Sparkles,
+  ShieldCheck,
+  User,
+  Layers,
+  Fingerprint
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext.jsx";
 import AdminContactMessages from "../components/AdminContactMessages.jsx";
+import Button from "../components/Button.jsx";
+import { SpotlightCard } from "../components/ui/SpotlightCard.jsx";
+import { Badge } from "../components/ui/Badge.jsx";
 import useDocumentMeta from "../hooks/useDocumentMeta.js";
 
 export default function AdminAuthCheckPage() {
@@ -10,26 +26,26 @@ export default function AdminAuthCheckPage() {
 
   useDocumentMeta({
     title: "Admin Command Center | DevStory",
-    description: "DevStory administrative console and message center.",
+    description: "DevStory administrative console, system settings, and audience message center.",
   });
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 space-y-8">
       {/* Top Banner Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs p-6 sm:p-8">
+      <SpotlightCard className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-5 text-center sm:text-left">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white text-3xl font-extrabold shadow-lg shadow-indigo-500/20 shrink-0">
-              👑
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-indigo-500/25 shrink-0">
+              <ShieldCheck className="w-8 h-8" />
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2.5 justify-center sm:justify-start">
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   Admin Console
                 </h1>
-                <span className="px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-                  Authorized
-                </span>
+                <Badge variant="success" className="text-xs font-bold uppercase tracking-wider">
+                  Verified Clearance
+                </Badge>
               </div>
               <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm mt-1">
                 Welcome back, <strong>{user?.name}</strong> ({user?.email}). Manage inquiries and system operations.
@@ -39,17 +55,17 @@ export default function AdminAuthCheckPage() {
 
           {/* Quick Nav Links */}
           <div className="flex items-center gap-2.5">
-            <Link
-              to="/articles/create"
-              className="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors shadow-xs"
-            >
-              + New Article
+            <Link to="/articles/create">
+              <Button variant="primary" size="sm" className="gap-1.5 shadow-md shadow-indigo-500/20">
+                <Plus className="w-4 h-4" />
+                <span>New Story</span>
+              </Button>
             </Link>
-            <Link
-              to="/my-articles"
-              className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs transition-colors"
-            >
-              My Articles
+            <Link to="/my-articles">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <FileText className="w-4 h-4" />
+                <span>My Articles</span>
+              </Button>
             </Link>
           </div>
         </div>
@@ -59,63 +75,67 @@ export default function AdminAuthCheckPage() {
           <button
             type="button"
             onClick={() => setActiveTab("messages")}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === "messages"
                 ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span>Contact Messages</span>
+            <Mail className="w-4 h-4" />
+            <span>Contact Inquiries</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("overview")}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === "overview"
                 ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-            <span>Authorization & Privileges</span>
+            <Fingerprint className="w-4 h-4" />
+            <span>Role & System Credentials</span>
           </button>
         </div>
-      </div>
+      </SpotlightCard>
 
       {/* Tab Panels */}
       {activeTab === "messages" ? (
         <AdminContactMessages />
       ) : (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs p-6 sm:p-8 space-y-6 animate-fadeIn">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-            System & Role Credentials
-          </h3>
+        <SpotlightCard className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs p-6 sm:p-8 space-y-6 animate-fadeIn">
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              System & Role Authorization
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Active security token payload and administrator privileges for this session.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-              <span className="text-slate-500 dark:text-slate-400 text-xs">User ID:</span>
-              <p className="font-mono text-xs text-slate-800 dark:text-slate-200 mt-1">{user?.id || user?._id}</p>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-1">
+              <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Account ID</span>
+              <p className="font-mono text-xs text-slate-800 dark:text-slate-200 break-all">{user?.id || user?._id}</p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-              <span className="text-slate-500 dark:text-slate-400 text-xs">Assigned Role:</span>
-              <p className="font-semibold text-indigo-600 dark:text-indigo-400 capitalize mt-1">{user?.role}</p>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-1">
+              <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Assigned Role</span>
+              <p className="font-semibold text-indigo-600 dark:text-indigo-400 capitalize">{user?.role}</p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-              <span className="text-slate-500 dark:text-slate-400 text-xs">Email Account:</span>
-              <p className="text-slate-800 dark:text-slate-200 font-medium mt-1">{user?.email}</p>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-1">
+              <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Verified Email</span>
+              <p className="text-slate-800 dark:text-slate-200 font-medium">{user?.email}</p>
             </div>
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-              <span className="text-slate-500 dark:text-slate-400 text-xs">Privileges:</span>
-              <p className="text-emerald-600 dark:text-emerald-400 font-semibold mt-1">Full Administrative Access</p>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-1">
+              <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold uppercase tracking-wider">Clearance Status</span>
+              <p className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Full Administrative Access</span>
+              </p>
             </div>
           </div>
-        </div>
+        </SpotlightCard>
       )}
     </div>
   );

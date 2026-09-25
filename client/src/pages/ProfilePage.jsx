@@ -1,11 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Shield,
+  Calendar,
+  FileText,
+  Edit3,
+  Save,
+  X,
+  CheckCircle2,
+  Sparkles,
+  Link as LinkIcon,
+  BookOpen,
+  Plus,
+  Camera,
+  AlertCircle
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { userApi } from "../services/api.js";
 import Button from "../components/Button.jsx";
 import Input from "../components/Input.jsx";
 import Loading from "../components/Loading.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
+import { SpotlightCard } from "../components/ui/SpotlightCard.jsx";
+import { Badge } from "../components/ui/Badge.jsx";
+import useDocumentMeta from "../hooks/useDocumentMeta.js";
 
 export default function ProfilePage() {
   const { user: authUser, updateUser } = useAuth();
@@ -24,6 +44,11 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [avatarLoadError, setAvatarLoadError] = useState(false);
+
+  useDocumentMeta({
+    title: "User Profile | DevStory",
+    description: "Manage your DevStory author profile, biography, and credentials.",
+  });
 
   // Fetch full profile from backend
   const fetchProfile = async () => {
@@ -156,31 +181,28 @@ export default function ProfilePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/70 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider">
-            Account Management
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Account Management</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             User Profile
           </h1>
           <p className="text-slate-600 dark:text-slate-300 text-sm">
-            Manage your personal information, public biography, and author credentials.
+            Manage your personal profile, public biography, and author credentials.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Link to="/my-articles">
             <Button variant="outline" size="sm" className="gap-1.5">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-              My Articles
+              <FileText className="w-4 h-4" />
+              <span>My Articles</span>
             </Button>
           </Link>
           <Link to="/articles/create">
-            <Button variant="primary" size="sm" className="gap-1.5">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Write Article
+            <Button variant="primary" size="sm" className="gap-1.5 shadow-md shadow-indigo-500/20">
+              <Plus className="w-4 h-4" />
+              <span>Write Article</span>
             </Button>
           </Link>
         </div>
@@ -188,49 +210,51 @@ export default function ProfilePage() {
 
       {/* Success Notification Banner */}
       {successMessage && (
-        <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between shadow-xs">
+        <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between shadow-xs animate-fadeIn">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span className="font-semibold">{successMessage}</span>
           </div>
           <button
             type="button"
             onClick={() => setSuccessMessage("")}
-            className="text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white font-bold text-xs"
+            className="text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white font-bold text-xs p-1"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Main Profile Card */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
+      <SpotlightCard className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-xs overflow-hidden">
         {/* Cover / Header Accent */}
-        <div className="h-28 sm:h-32 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 relative">
-          <div className="absolute top-3 right-4">
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 text-white backdrop-blur-xs border border-white/30">
+        <div className="h-32 sm:h-36 bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:24px_24px]" />
+          <div className="absolute top-4 right-4">
+            <Badge
+              variant={effectiveUser?.role === "admin" ? "primary" : "secondary"}
+              className="text-xs font-bold uppercase tracking-wider backdrop-blur-md bg-white/20 text-white border-white/30"
+            >
               {effectiveUser?.role === "admin" ? "Platform Administrator" : "Author & Reader"}
-            </span>
+            </Badge>
           </div>
         </div>
 
         {/* Profile Content Body */}
         <div className="px-6 sm:px-8 pb-8 pt-0 relative">
           {/* Avatar and Action Row */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-14 sm:-mt-16 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 -mt-16 sm:-mt-18 mb-6">
             {/* Avatar with fallback */}
-            <div className="relative">
+            <div className="relative group">
               {effectiveUser?.avatar && !avatarLoadError ? (
                 <img
                   src={effectiveUser.avatar}
                   alt={effectiveUser.name}
                   onError={() => setAvatarLoadError(true)}
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-md bg-white dark:bg-slate-900"
+                  className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl object-cover border-4 border-white dark:border-slate-900 shadow-xl bg-white dark:bg-slate-900"
                 />
               ) : (
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 border-4 border-white dark:border-slate-900 shadow-md flex items-center justify-center text-white text-3xl sm:text-4xl font-extrabold uppercase select-none">
+                <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-gradient-to-tr from-indigo-600 to-violet-600 border-4 border-white dark:border-slate-900 shadow-xl flex items-center justify-center text-white text-4xl font-extrabold uppercase select-none">
                   {effectiveUser?.name ? effectiveUser.name.charAt(0) : "U"}
                 </div>
               )}
@@ -243,12 +267,10 @@ export default function ProfilePage() {
                 variant="outline"
                 size="md"
                 onClick={() => setIsEditing(true)}
-                className="gap-2 self-start sm:self-end border-slate-300 dark:border-slate-700 hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/50 hover:text-indigo-700 dark:hover:text-indigo-300"
+                className="gap-2 self-start sm:self-end"
               >
-                <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-                Edit Profile
+                <Edit3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <span>Edit Profile</span>
               </Button>
             ) : (
               <Button
@@ -256,7 +278,7 @@ export default function ProfilePage() {
                 variant="ghost"
                 size="md"
                 onClick={handleCancelEdit}
-                className="self-start sm:self-end text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                className="self-start sm:self-end text-slate-500 dark:text-slate-400"
               >
                 Cancel Editing
               </Button>
@@ -272,20 +294,18 @@ export default function ProfilePage() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
                     {effectiveUser?.name}
                   </h2>
-                  <span className="px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                  <Badge variant="secondary" className="text-xs">
                     @{effectiveUser?.name?.toLowerCase().replace(/\s+/g, "") || "user"}
-                  </span>
+                  </Badge>
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
-                  <svg className="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  {effectiveUser?.email}
+                  <Mail className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                  <span>{effectiveUser?.email}</span>
                 </p>
               </div>
 
               {/* Bio Section */}
-              <div className="p-5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-2">
+              <div className="p-5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-800 space-y-2">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                   About & Biography
                 </h3>
@@ -294,34 +314,37 @@ export default function ProfilePage() {
                     {effectiveUser.bio}
                   </p>
                 ) : (
-                  <p className="text-sm text-slate-400 italic">
-                    No biography provided yet. Click "Edit Profile" to share details about your background, projects, and interests.
+                  <p className="text-sm text-slate-400 dark:text-slate-500 italic">
+                    No biography provided yet. Click "Edit Profile" to share details about your background, expertise, and projects.
                   </p>
                 )}
               </div>
 
               {/* Metadata Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-1">
-                  <span className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                    Member Since
-                  </span>
+                <div className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-1">
+                  <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-wider">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>Member Since</span>
+                  </div>
                   <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{formattedJoinedDate}</p>
                 </div>
 
-                <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-1">
-                  <span className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                    Platform Role
-                  </span>
+                <div className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-1">
+                  <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-wider">
+                    <Shield className="w-3.5 h-3.5" />
+                    <span>Platform Role</span>
+                  </div>
                   <p className="text-sm font-bold text-slate-800 dark:text-slate-200 capitalize">
                     {effectiveUser?.role || "User"}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-1">
-                  <span className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                    Published Articles
-                  </span>
+                <div className="p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 space-y-1">
+                  <div className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-wider">
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <span>Published Articles</span>
+                  </div>
                   <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
                     {effectiveUser?.articlesCount !== undefined ? effectiveUser.articlesCount : "—"}
                   </p>
@@ -336,14 +359,15 @@ export default function ProfilePage() {
               </h3>
 
               {formErrors.submit && (
-                <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-medium">
-                  {formErrors.submit}
+                <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-medium flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{formErrors.submit}</span>
                 </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <Input
-                  label="Username / Display Name"
+                  label="Display Name"
                   id="name"
                   name="name"
                   value={formData.name}
@@ -351,6 +375,7 @@ export default function ProfilePage() {
                   placeholder="e.g. Alex Johnson"
                   error={formErrors.name}
                   helperText="Your public display name across DevStory."
+                  startIcon={<User className="w-4 h-4" />}
                   required
                 />
 
@@ -361,20 +386,21 @@ export default function ProfilePage() {
                   value={effectiveUser?.email || ""}
                   disabled
                   helperText="Email is tied to your account login and remains read-only."
+                  startIcon={<Mail className="w-4 h-4" />}
                 />
 
-                <div className="sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800">
+                <div className="sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800">
                   <div className="shrink-0">
-                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">Preview:</span>
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-1">Avatar Preview:</span>
                     {formData.avatar && !avatarLoadError ? (
                       <img
                         src={formData.avatar}
                         alt="Avatar Preview"
                         onError={() => setAvatarLoadError(true)}
-                        className="w-14 h-14 rounded-xl object-cover border-2 border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 shadow-xs"
+                        className="w-16 h-16 rounded-2xl object-cover border-2 border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-900 shadow-xs"
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold text-lg border border-indigo-200 dark:border-indigo-800 shadow-xs">
+                      <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold text-xl border border-indigo-200 dark:border-indigo-800 shadow-xs">
                         {formData.name?.charAt(0) || "U"}
                       </div>
                     )}
@@ -388,7 +414,8 @@ export default function ProfilePage() {
                       onChange={handleInputChange}
                       placeholder="https://images.unsplash.com/..."
                       error={formErrors.avatar}
-                      helperText="Paste a direct HTTP or HTTPS image URL for your profile picture."
+                      helperText="Paste a direct image URL (Unsplash, Cloudinary, etc.)"
+                      startIcon={<LinkIcon className="w-4 h-4" />}
                     />
                   </div>
                 </div>
@@ -410,11 +437,11 @@ export default function ProfilePage() {
                   rows={4}
                   value={formData.bio}
                   onChange={handleInputChange}
-                  placeholder="Tell readers about yourself, your technical skills, or what you write about..."
-                  className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all focus:outline-hidden ${
+                  placeholder="Tell readers about yourself, your technical stack, or what you write about..."
+                  className={`w-full px-4 py-3 rounded-2xl border text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all focus:outline-hidden ${
                     formErrors.bio
                       ? "border-rose-300 dark:border-rose-800 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 bg-rose-50/30 dark:bg-rose-950/20"
-                      : "border-slate-300 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 hover:border-slate-400"
+                      : "border-slate-200 dark:border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 hover:border-slate-300 dark:hover:border-slate-700"
                   }`}
                 />
                 {formErrors.bio && (
@@ -439,18 +466,16 @@ export default function ProfilePage() {
                   size="md"
                   loading={isSaving}
                   disabled={isSaving}
-                  className="gap-2"
+                  className="gap-2 shadow-md shadow-indigo-500/20"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Save Changes
+                  <Save className="w-4 h-4" />
+                  <span>Save Changes</span>
                 </Button>
               </div>
             </form>
           )}
         </div>
-      </div>
+      </SpotlightCard>
     </div>
   );
 }

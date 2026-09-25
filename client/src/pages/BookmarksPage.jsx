@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {
+  Bookmark,
+  ArrowRight,
+  BookOpen,
+  Sparkles,
+  Compass,
+  ArrowLeft
+} from "lucide-react";
 import { bookmarkApi } from "../services/api.js";
 import ArticleCard from "../components/ArticleCard.jsx";
 import Loading from "../components/Loading.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
 import Button from "../components/Button.jsx";
+import { SpotlightCard } from "../components/ui/SpotlightCard.jsx";
+import { Badge } from "../components/ui/Badge.jsx";
+import useDocumentMeta from "../hooks/useDocumentMeta.js";
 
 export default function BookmarksPage() {
   const [bookmarks, setBookmarks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useDocumentMeta({
+    title: "Saved Bookmarks | DevStory",
+    description: "Your personalized reading list and saved technical articles on DevStory.",
+  });
 
   const fetchBookmarks = async () => {
     setIsLoading(true);
@@ -32,10 +48,6 @@ export default function BookmarksPage() {
     fetchBookmarks();
   }, []);
 
-  const handleRemoveBookmark = (articleId) => {
-    setBookmarks((prev) => prev.filter((b) => b.article && String(b.article._id || b.article.id || b.article.slug) !== String(articleId)));
-  };
-
   if (isLoading) {
     return <Loading message="Loading your saved bookmarks..." fullScreen={false} />;
   }
@@ -57,29 +69,25 @@ export default function BookmarksPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
         <div className="space-y-1">
-          <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider">
-            <svg className="w-4 h-4 fill-indigo-600 dark:fill-indigo-400" viewBox="0 0 24 24">
-              <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
-            </svg>
-            Personal Library
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/70 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider mb-1">
+            <Bookmark className="w-3.5 h-3.5 fill-indigo-600 dark:fill-indigo-400" />
+            <span>Personal Reading Library</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Saved Bookmarks
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
             {bookmarks.length === 1
-              ? "You have 1 saved article for quick reading."
-              : `You have ${bookmarks.length} saved articles in your personal collection.`}
+              ? "You have 1 saved article for quick reference."
+              : `You have ${bookmarks.length} saved articles in your personal reading queue.`}
           </p>
         </div>
 
         {bookmarks.length > 0 && (
           <Link to="/articles">
-            <Button variant="outline" size="sm" className="gap-1.5 shrink-0">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m7 7l-7-7 7-7" />
-              </svg>
-              Explore More Articles
+            <Button variant="outline" size="sm" className="gap-2 shrink-0">
+              <Compass className="w-4 h-4" />
+              <span>Explore More Stories</span>
             </Button>
           </Link>
         )}
@@ -87,31 +95,29 @@ export default function BookmarksPage() {
 
       {/* Empty State */}
       {bookmarks.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 sm:p-12 text-center space-y-6 max-w-2xl mx-auto my-8 shadow-xs">
+        <SpotlightCard className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 sm:p-12 text-center space-y-6 max-w-2xl mx-auto my-8 shadow-xs">
           <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto shadow-xs">
-            <svg className="w-8 h-8 fill-none text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-            </svg>
+            <Bookmark className="w-8 h-8" />
           </div>
 
-          <div className="space-y-2">
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">No saved articles yet</h3>
-            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-md mx-auto">
-              When you find an article you want to read later, click the bookmark icon on any article card or detail page to save it here.
+          <div className="space-y-2 max-w-md mx-auto">
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">
+              No saved articles yet
+            </h3>
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
+              When you find a tutorial, deep-dive, or architectural guide you want to read later, tap the bookmark icon on any article card to save it here.
             </p>
           </div>
 
           <div className="pt-2">
             <Link to="/articles">
-              <Button variant="primary" size="md" className="gap-2">
+              <Button variant="primary" size="md" className="gap-2 shadow-md shadow-indigo-500/20">
                 <span>Browse All Articles</span>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
+                <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
-        </div>
+        </SpotlightCard>
       ) : (
         /* Articles Grid */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
