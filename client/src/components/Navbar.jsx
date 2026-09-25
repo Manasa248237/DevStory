@@ -62,18 +62,32 @@ export default function Navbar() {
             ))}
 
             {isAuthenticated && (
-              <NavLink
-                to="/my-articles"
-                className={({ isActive }) =>
-                  `px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
-                    isActive
-                      ? "text-indigo-600 bg-indigo-50/80 font-semibold shadow-xs"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-                  }`
-                }
-              >
-                My Articles
-              </NavLink>
+              <>
+                <NavLink
+                  to="/my-articles"
+                  className={({ isActive }) =>
+                    `px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                      isActive
+                        ? "text-indigo-600 bg-indigo-50/80 font-semibold shadow-xs"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                    }`
+                  }
+                >
+                  My Articles
+                </NavLink>
+                <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    `px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                      isActive
+                        ? "text-indigo-600 bg-indigo-50/80 font-semibold shadow-xs"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                    }`
+                  }
+                >
+                  Profile
+                </NavLink>
+              </>
             )}
           </nav>
 
@@ -93,14 +107,26 @@ export default function Navbar() {
                   </button>
                 </Link>
 
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white text-xs font-bold uppercase">
-                    {user?.name ? user.name.charAt(0) : "U"}
-                  </div>
-                  <span className="text-xs font-bold text-slate-800 max-w-[110px] truncate">
+                <Link
+                  to="/profile"
+                  title="View Profile"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 transition-all cursor-pointer group"
+                >
+                  {user?.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-7 h-7 rounded-full object-cover border border-slate-200"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white text-xs font-bold uppercase">
+                      {user?.name ? user.name.charAt(0) : "U"}
+                    </div>
+                  )}
+                  <span className="text-xs font-bold text-slate-800 max-w-[110px] truncate group-hover:text-indigo-600 transition-colors">
                     {user?.name}
                   </span>
-                </div>
+                </Link>
 
                 <button
                   type="button"
@@ -188,6 +214,19 @@ export default function Navbar() {
                   My Articles
                 </NavLink>
                 <NavLink
+                  to="/profile"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `px-3 py-2.5 rounded-lg text-base font-medium transition-colors ${
+                      isActive
+                        ? "text-indigo-600 bg-indigo-50 font-semibold"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                    }`
+                  }
+                >
+                  Profile
+                </NavLink>
+                <NavLink
                   to="/articles/create"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={({ isActive }) =>
@@ -206,12 +245,27 @@ export default function Navbar() {
           <div className="pt-3 border-t border-slate-200 flex flex-col gap-2">
             {isAuthenticated ? (
               <div className="space-y-2">
-                <div className="p-3 bg-slate-50 rounded-lg text-xs font-bold text-slate-700 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
-                    {user?.name?.charAt(0)}
+                <Link
+                  to="/profile"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-3 bg-slate-50 hover:bg-indigo-50/60 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 flex items-center gap-2.5 transition-colors cursor-pointer"
+                >
+                  {user?.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-7 h-7 rounded-full object-cover border border-slate-200"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
+                      {user?.name?.charAt(0) || "U"}
+                    </div>
+                  )}
+                  <div className="flex flex-col truncate">
+                    <span className="text-slate-900 font-bold">{user?.name}</span>
+                    <span className="text-slate-500 font-normal">{user?.email}</span>
                   </div>
-                  <span>{user?.name} ({user?.email})</span>
-                </div>
+                </Link>
                 <button
                   type="button"
                   onClick={() => {

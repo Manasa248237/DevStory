@@ -126,3 +126,13 @@ export const articleApi = {
       method: "DELETE",
     }),
 };
+
+// User Profile API Helpers
+export const userApi = {
+  getProfile: () => apiRequest("/users/profile", { method: "GET" }),
+  updateProfile: (profileData) =>
+    apiRequest("/users/profile", {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    }),
+};

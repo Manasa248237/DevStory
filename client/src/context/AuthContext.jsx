@@ -76,6 +76,17 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("devstory_user");
   };
 
+  /**
+   * Update current user in local state and localStorage
+   */
+  const updateUser = (updatedData) => {
+    setUser((prev) => {
+      const merged = { ...prev, ...updatedData };
+      localStorage.setItem("devstory_user", JSON.stringify(merged));
+      return merged;
+    });
+  };
+
   const value = {
     user,
     token,
@@ -85,6 +96,7 @@ export function AuthProvider({ children }) {
     login,
     signup,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
