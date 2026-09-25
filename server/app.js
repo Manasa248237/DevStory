@@ -24,7 +24,15 @@ const clientDistPath = path.join(__dirname, "../client/dist");
 const app = express();
 
 // Global Middleware
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  })
+);
+app.options("*", cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,7 +40,18 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// API Routes Mounting
+// 1. Direct authentication aliases (works for /login, /signin, /signup, /register on both root and /api)
+app.post(["/login", "/signin", "/api/login", "/api/signin"], (req, res, next) => {
+  req.url = req.url.includes("login") ? "/signin" : "/signin";
+  authRoutes(req, res, next);
+});
+
+app.post(["/signup", "/register", "/api/signup", "/api/register"], (req, res, next) => {
+  req.url = "/signup";
+  authRoutes(req, res, next);
+});
+
+// 2. Canonical API Routes (/api/*)
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
@@ -40,12 +59,38 @@ app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Static frontend serving in production if built
+// 3. Compatibility routes for clients making requests without /api prefix
+app.use("/auth", authRoutes);
+app.use("/health", healthRoutes);
+
+// 4. Fallback rewriter for non-GET or JSON requests hitting /articles, /users, etc. without /api prefix
+app.use((req, res, next) => {
+  if (
+    !req.path.startsWith("/api") &&
+    (req.path.startsWith("/articles") ||
+      req.path.startsWith("/users") ||
+      req.path.startsWith("/comments") ||
+      req.path.startsWith("/admin"))
+  ) {
+    if (
+      req.method !== "GET" ||
+      req.headers.accept?.includes("application/json") ||
+      req.headers["content-type"]?.includes("application/json") ||
+      req.xhr
+    ) {
+      req.url = `/api${req.url}`;
+      return app._router.handle(req, res, next);
+    }
+  }
+  next();
+});
+
+// 5. Static frontend serving in production if built
 if (fs.existsSync(clientDistPath)) {
   app.use(express.static(clientDistPath));
 
   app.get("*", (req, res, next) => {
-    if (req.path.startsWith("/api")) {
+    if (req.path.startsWith("/api") || req.path.startsWith("/auth") || req.path.startsWith("/health")) {
       return next();
     }
     res.sendFile(path.join(clientDistPath, "index.html"));

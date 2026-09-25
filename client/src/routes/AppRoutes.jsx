@@ -26,7 +26,9 @@ export default function AppRoutes() {
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/articles/:idOrSlug" element={<ArticleDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signin" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/register" element={<SignupPage />} />
         <Route path="/contact" element={<ContactPage />} />
 
         {/* Protected Routes (Authenticated Users) */}

@@ -2,16 +2,34 @@
  * Centralized API Client Service
  */
 
-// Adapts dynamically: uses VITE_API_BASE_URL if configured, otherwise falls back to /api in production and localhost:5000 in dev
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.MODE === "production" ? "/api" : "http://localhost:5000/api");
+// Dynamically resolves and normalizes the backend API base URL
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl && typeof envUrl === "string" && envUrl.trim() !== "") {
+    let clean = envUrl.trim().replace(/\/+$/, ""); // remove trailing slashes
+    if (!clean.endsWith("/api")) {
+      clean = `${clean}/api`;
+    }
+    return clean;
+  }
+
+  // In production (e.g., Render unified service or reverse proxy)
+  if (import.meta.env.MODE === "production") {
+    return "/api";
+  }
+
+  // Local development default (Vite proxy forwards /api or direct localhost:5000)
+  return "http://localhost:5000/api";
+};
+
+const API_BASE_URL = getBaseUrl();
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem("devstory_token");
 
   const headers = {
     "Content-Type": "application/json",
+    Accept: "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
@@ -22,7 +40,8 @@ export async function apiRequest(endpoint, options = {}) {
   };
 
   try {
-    const url = `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    const url = `${API_BASE_URL}${cleanEndpoint}`;
     const response = await fetch(url, config);
     const data = await response.json().catch(() => ({}));
 
@@ -37,7 +56,7 @@ export async function apiRequest(endpoint, options = {}) {
   } catch (error) {
     if (error.name === "TypeError" && error.message.includes("Failed to fetch")) {
       throw new Error(
-        "Unable to connect to the backend server. Please ensure the Express server is running on port 5000."
+        "Unable to connect to the backend server. Please check your network connection or verify that the server is online."
       );
     }
     throw error;
