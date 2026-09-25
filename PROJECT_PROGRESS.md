@@ -13,7 +13,7 @@
 | **Phase 5** | Blog Article Management (CRUD + MVC + Real React UI) | ✅ **Completed & Verified** |
 | **Phase 6** | Search, Filtering & Pagination | ✅ **Completed & Verified** |
 | **Phase 7** | User Profile & Edit Profile (Frontend + Backend) | ✅ **Completed & Verified** |
-| **Phase 8** | Comments, Likes & Bookmarks | ⏳ *Pending* |
+| **Phase 8** | Comments Feature (Frontend & Backend API) | ✅ **Completed & Verified** |
 | **Phase 9** | Admin Dashboard & Moderation | ⏳ *Pending* |
 | **Phase 10** | Testing & Final Documentation | ⏳ *Pending* |
 
@@ -138,4 +138,28 @@ npm install bcryptjs jsonwebtoken
 - **Phase 5 Full-Stack Regression Suite:** 13/13 tests passed (100%).
 - **Frontend Production Build:** Vite production build succeeded cleanly in ~330ms (0 errors).
 - **Deployment Status:** Committed and pushed to `origin/main` on GitHub; automatically redeployed to Render.
+
+---
+
+## 🚀 Phase 8 Implementation Summary: Comments Feature (Full Stack)
+
+### 1. Files Created & Updated
+- `server/models/Comment.js`: Created Comment Mongoose model with references to `Article` and `User`, string length validation (1–1000 chars), and compound index (`{ article: 1, createdAt: -1 }`).
+- `server/controllers/commentController.js`: Implemented `getCommentsByArticle`, `createComment`, `updateComment`, and `deleteComment` with ObjectId and slug resolution, input validation, and multi-tier deletion permissions (comment author, article author, admin).
+- `server/routes/commentRoutes.js`: Replaced 501 placeholder with REST routes (`GET /article/:articleId`, `POST /article/:articleId`, `PUT /:commentId`, `DELETE /:commentId`).
+- `server/routes/articleRoutes.js`: Mounted sub-routes `GET /:articleId/comments` and `POST /:articleId/comments`.
+- `server/controllers/articleController.js`: Added cascade deletion (`Comment.deleteMany({ article: article._id })`) when an article is removed.
+- `client/src/services/api.js`: Exported `commentApi` helper object (`getByArticle`, `create`, `update`, `delete`).
+- `client/src/components/CommentItem.jsx`: Created reusable comment card with user avatar, author/admin badges, formatted date, inline edit form with character counter, and custom delete modal.
+- `client/src/components/CommentSection.jsx`: Created main discussion container managing comment counts, authenticated post form, unauthenticated sign-in prompt, loading spinners, empty states, and error handlers.
+- `client/src/pages/ArticleDetailPage.jsx`: Embedded `<CommentSection />` below author bio card.
+- `server/test_comments.js`: Automated test suite with 24 assertions covering creation, input validation, editing, deletion, permissions, and cascade teardown.
+
+### 2. Verification Results
+- **Comments API Test Suite:** 24/24 assertions passed (100%).
+- **Profile & Security Suite:** 42/42 assertions passed (100%).
+- **Phase 5 Full-Stack Regression Suite:** 13/13 tests passed (100%).
+- **Frontend Production Build:** Vite production build succeeded in 309ms (0 errors, 51 modules transformed).
+- **Deployment Status:** Committed and pushed to `origin/main` on GitHub (`19c1e96`).
+
 
