@@ -12,9 +12,9 @@
 | **Phase 4** | User Authentication (JWT + bcrypt + Protected Routes) | ✅ **Completed & Verified** |
 | **Phase 5** | Blog Article Management (CRUD + MVC + Real React UI) | ✅ **Completed & Verified** |
 | **Phase 6** | Search, Filtering & Pagination | ✅ **Completed & Verified** |
-| **Phase 7** | Comments, Likes & Bookmarks | ⏳ *Pending* |
-| **Phase 8** | Admin Dashboard & Role-based Access | ⏳ *Pending* |
-| **Phase 9** | Advanced Features | ⏳ *Pending* |
+| **Phase 7** | User Profile & Edit Profile (Frontend + Backend) | ✅ **Completed & Verified** |
+| **Phase 8** | Comments, Likes & Bookmarks | ⏳ *Pending* |
+| **Phase 9** | Admin Dashboard & Moderation | ⏳ *Pending* |
 | **Phase 10** | Testing & Final Documentation | ⏳ *Pending* |
 
 ---
@@ -118,3 +118,24 @@ npm install bcryptjs jsonwebtoken
 - **CRUD & Authorization Suite:** 18/18 tests passed (100%).
 - **Phase 5 Suite:** 13/13 tests passed (100%).
 - **Frontend Production Build:** Vite production build succeeded in ~314ms with 0 errors.
+
+---
+
+## 🚀 Phase 7 Implementation Summary: User Profile & In-Place Edit Profile
+
+### 1. Files Created & Updated
+- `server/controllers/userController.js`: Added `getUserProfile` and `updateUserProfile` handlers with validation for name (2–50 chars), bio (max 250 chars), and avatar (valid HTTP/HTTPS URL or empty string to reset). Enforced security immutability on `role`, `password`, `email`, and `_id`. Computed author statistics (`articlesCount`).
+- `server/routes/userRoutes.js`: Replaced placeholders with protected endpoints `GET /profile`, `PUT /profile`, `GET /me`, and `PUT /me`.
+- `client/src/pages/ProfilePage.jsx`: Implemented full user profile view and in-place edit mode. Includes read-only email display, live avatar preview, character counter for bio, double-submission prevention, and cancel handler.
+- `client/src/context/AuthContext.jsx`: Added `updateUser()` method to dynamically update user state and `localStorage` without re-login.
+- `client/src/components/Navbar.jsx`: Connected desktop and mobile navigation to `useAuth().user` for immediate greeting and avatar thumbnail synchronization.
+- `client/src/services/api.js`: Exported `userApi` (`getProfile`, `updateProfile`).
+- `server/test_user_profile.js`: Created comprehensive automated test suite with 42 assertions covering input validation, security, and live remote endpoints via `TEST_API_URL`.
+
+### 2. Verification Results
+- **Profile & Security Suite (Local):** 42/42 assertions passed (100%).
+- **Profile & Security Suite (Live Render):** 42/42 assertions passed (100%) against `https://devstory.onrender.com/api`.
+- **Phase 5 Full-Stack Regression Suite:** 13/13 tests passed (100%).
+- **Frontend Production Build:** Vite production build succeeded cleanly in ~330ms (0 errors).
+- **Deployment Status:** Committed and pushed to `origin/main` on GitHub; automatically redeployed to Render.
+
