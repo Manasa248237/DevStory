@@ -136,3 +136,27 @@ export const userApi = {
       body: JSON.stringify(profileData),
     }),
 };
+
+// Comment API Helpers
+export const commentApi = {
+  getByArticle: (articleIdOrSlug) =>
+    apiRequest(`/articles/${articleIdOrSlug}/comments`, { method: "GET" }),
+
+  create: (articleIdOrSlug, commentData) =>
+    apiRequest(`/articles/${articleIdOrSlug}/comments`, {
+      method: "POST",
+      body: JSON.stringify(commentData),
+    }),
+
+  update: (commentId, commentData) =>
+    apiRequest(`/comments/${commentId}`, {
+      method: "PUT",
+      body: JSON.stringify(commentData),
+    }),
+
+  delete: (commentId) =>
+    apiRequest(`/comments/${commentId}`, {
+      method: "DELETE",
+    }),
+};
+

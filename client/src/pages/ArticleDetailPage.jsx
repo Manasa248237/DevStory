@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import Loading from "../components/Loading.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
 import Button from "../components/Button.jsx";
+import CommentSection from "../components/CommentSection.jsx";
 
 export default function ArticleDetailPage() {
   const { idOrSlug } = useParams();
@@ -231,6 +232,12 @@ export default function ArticleDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Discussion & Comments Section */}
+      <CommentSection
+        articleId={article._id || idOrSlug}
+        articleAuthorId={article.author?._id || article.author}
+      />
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
