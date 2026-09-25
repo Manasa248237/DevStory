@@ -148,7 +148,39 @@ async function runTests() {
     });
     assert(shortNameRes.status === 400, "Name under 2 chars returns 400 Bad Request");
 
-    // 6b. Bio too long (> 250 chars)
+    // 6b. Empty username / whitespace username
+    const emptyNameRes = await fetch(`${BASE_URL}/users/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({ name: "" }),
+    });
+    assert(emptyNameRes.status === 400, "Empty name returns 400 Bad Request");
+
+    const whitespaceNameRes = await fetch(`${BASE_URL}/users/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({ name: "     " }),
+    });
+    assert(whitespaceNameRes.status === 400, "Whitespace-only name returns 400 Bad Request");
+
+    // 6c. Name over 50 chars
+    const longNameRes = await fetch(`${BASE_URL}/users/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({ name: "A".repeat(51) }),
+    });
+    assert(longNameRes.status === 400, "Name over 50 chars returns 400 Bad Request");
+
+    // 6d. Bio too long (> 250 chars)
     const longBioRes = await fetch(`${BASE_URL}/users/profile`, {
       method: "PUT",
       headers: {
@@ -159,7 +191,7 @@ async function runTests() {
     });
     assert(longBioRes.status === 400, "Bio over 250 chars returns 400 Bad Request");
 
-    // 6c. Invalid avatar URL
+    // 6e. Invalid avatar URL
     const invalidAvatarRes = await fetch(`${BASE_URL}/users/profile`, {
       method: "PUT",
       headers: {
@@ -169,6 +201,49 @@ async function runTests() {
       body: JSON.stringify({ avatar: "not-a-valid-http-url" }),
     });
     assert(invalidAvatarRes.status === 400, "Non-HTTP avatar returns 400 Bad Request");
+
+    // 6f. Valid empty string to clear avatar
+    const clearAvatarRes = await fetch(`${BASE_URL}/users/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({ avatar: "" }),
+    });
+    const clearAvatarData = await clearAvatarRes.json();
+    assert(clearAvatarRes.status === 200, "Clearing avatar with empty string returns 200 OK");
+    assert(clearAvatarData.user.avatar === "", "Avatar is cleared");
+
+    // 6g. Unauthorized update attempt (missing token)
+    const noTokenUpdateRes = await fetch(`${BASE_URL}/users/profile`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Unauthorized Name" }),
+    });
+    assert(noTokenUpdateRes.status === 401, "PUT /api/users/profile without token returns 401 Unauthorized");
+
+    // 6h. Unauthorized update attempt (invalid token)
+    const invalidTokenUpdateRes = await fetch(`${BASE_URL}/users/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer invalid_token_12345",
+      },
+      body: JSON.stringify({ name: "Unauthorized Name" }),
+    });
+    assert(invalidTokenUpdateRes.status === 401, "PUT /api/users/profile with invalid token returns 401 Unauthorized");
+
+    // 6i. Duplicate username / non-conflicting username update
+    const duplicateNameRes = await fetch(`${BASE_URL}/users/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({ username: "Alex Johnson" }),
+    });
+    assert(duplicateNameRes.status === 200, "Valid username update using username alias returns 200 OK");
 
     // --- TEST 7: Security - Role and Password Immutable via Profile Endpoint ---
     console.log("\n--- Test 7: Security Guarding (Role & Password Immutable) ---");

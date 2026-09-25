@@ -343,26 +343,55 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <Input
-                  label="Display Name"
+                  label="Username / Display Name"
                   id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g. Alex Johnson"
                   error={formErrors.name}
+                  helperText="Your public display name across DevStory."
                   required
                 />
 
                 <Input
-                  label="Avatar Image URL (Optional)"
-                  id="avatar"
-                  name="avatar"
-                  value={formData.avatar}
-                  onChange={handleInputChange}
-                  placeholder="https://example.com/avatar.jpg"
-                  error={formErrors.avatar}
-                  helperText="Provide a direct link to an image hosted online."
+                  label="Email Address (Read-Only)"
+                  id="email"
+                  name="email"
+                  value={effectiveUser?.email || ""}
+                  disabled
+                  helperText="Email is tied to your account login and remains read-only."
                 />
+
+                <div className="sm:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl bg-slate-50/70 border border-slate-200/80">
+                  <div className="shrink-0">
+                    <span className="text-xs font-semibold text-slate-500 block mb-1">Preview:</span>
+                    {formData.avatar && !avatarLoadError ? (
+                      <img
+                        src={formData.avatar}
+                        alt="Avatar Preview"
+                        onError={() => setAvatarLoadError(true)}
+                        className="w-14 h-14 rounded-xl object-cover border-2 border-indigo-200 bg-white shadow-xs"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-lg border border-indigo-200 shadow-xs">
+                        {formData.name?.charAt(0) || "U"}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 w-full">
+                    <Input
+                      label="Avatar Image URL (Optional)"
+                      id="avatar"
+                      name="avatar"
+                      value={formData.avatar}
+                      onChange={handleInputChange}
+                      placeholder="https://images.unsplash.com/..."
+                      error={formErrors.avatar}
+                      helperText="Paste a direct HTTP or HTTPS image URL for your profile picture."
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Bio Field with Live Character Counter */}
