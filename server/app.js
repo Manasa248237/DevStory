@@ -16,6 +16,7 @@ import articleRoutes from "./routes/articleRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import bookmarkRoutes from "./routes/bookmarkRoutes.js";
+import newsletterRoutes from "./routes/newsletterRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -59,6 +60,7 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/bookmarks", bookmarkRoutes);
+app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/admin", adminRoutes);
 
 // 3. Compatibility routes for clients making requests without /api prefix
@@ -66,6 +68,7 @@ app.use("/auth", authRoutes);
 app.use("/health", healthRoutes);
 app.use("/users", userRoutes);
 app.use("/bookmarks", bookmarkRoutes);
+app.use("/newsletter", newsletterRoutes);
 
 // 4. Fallback rewriter for non-GET or JSON requests hitting /articles, /users, etc. without /api prefix
 app.use((req, res, next) => {
@@ -75,6 +78,7 @@ app.use((req, res, next) => {
       req.path.startsWith("/users") ||
       req.path.startsWith("/comments") ||
       req.path.startsWith("/bookmarks") ||
+      req.path.startsWith("/newsletter") ||
       req.path.startsWith("/admin"))
   ) {
     if (
