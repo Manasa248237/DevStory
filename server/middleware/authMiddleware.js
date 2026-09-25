@@ -54,6 +54,35 @@ export const protect = async (req, res, next) => {
 };
 
 /**
+ * Optional authentication - If Bearer token is provided, attaches req.user; otherwise proceeds without error
+ */
+export const optionalAuth = async (req, res, next) => {
+  try {
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      return next();
+    }
+
+    const secret = process.env.JWT_SECRET || "dev_secret_key_change_in_production";
+    const decoded = jwt.verify(token, secret);
+    const user = await User.findById(decoded.id).select("-password");
+    if (user) {
+      req.user = user;
+    }
+  } catch (error) {
+    // Silently proceed as guest if token is invalid or expired
+  }
+  next();
+};
+
+/**
  * Admin authorization guard - Checks if user has admin role
  */
 export const adminOnly = (req, res, next) => {

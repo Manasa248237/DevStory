@@ -16,6 +16,7 @@ export default function ArticleDetailPage() {
   const [error, setError] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -42,13 +43,13 @@ export default function ArticleDetailPage() {
 
   const handleDelete = async () => {
     setIsDeleting(true);
+    setDeleteError("");
     try {
       await articleApi.delete(article.slug || article._id);
       navigate("/articles", { replace: true });
     } catch (err) {
-      alert(err.message || "Failed to delete article");
+      setDeleteError(err.message || "Failed to delete article");
       setIsDeleting(false);
-      setShowDeleteModal(false);
     }
   };
 
@@ -246,6 +247,11 @@ export default function ArticleDetailPage() {
                 Are you sure you want to delete <strong>"{article.title}"</strong>? This action cannot be undone.
               </p>
             </div>
+            {deleteError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs font-semibold text-rose-700">
+                {deleteError}
+              </div>
+            )}
             <div className="flex gap-3 pt-2">
               <Button
                 variant="outline"

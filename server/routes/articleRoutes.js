@@ -7,7 +7,7 @@ import {
   deleteArticle,
   getMyArticles,
 } from "../controllers/articleController.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { protect, optionalAuth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -17,8 +17,8 @@ router.get("/", getAllArticles);
 // Private route: Logged-in user's articles (Must be placed before /:idOrSlug)
 router.get("/my-articles", protect, getMyArticles);
 
-// Public route for single article
-router.get("/:idOrSlug", getArticleByIdOrSlug);
+// Public / Semi-private route for single article (drafts visible only to author & admin)
+router.get("/:idOrSlug", optionalAuth, getArticleByIdOrSlug);
 
 // Private write routes
 router.post("/", protect, createArticle);

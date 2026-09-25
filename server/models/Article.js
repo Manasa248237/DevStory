@@ -107,6 +107,11 @@ articleSchema.pre("validate", async function () {
   }
 });
 
+// Compound indexes for optimal query performance
+articleSchema.index({ status: 1, createdAt: -1 });
+articleSchema.index({ author: 1, createdAt: -1 });
+articleSchema.index({ status: 1, category: 1 });
+
 const Article = mongoose.model("Article", articleSchema);
 
 export default Article;

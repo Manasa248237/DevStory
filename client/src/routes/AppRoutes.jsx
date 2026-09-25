@@ -24,19 +24,20 @@ export default function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/articles" element={<ArticlesPage />} />
-        <Route path="/articles/:idOrSlug" element={<ArticleDetailPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signin" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/register" element={<SignupPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-
         {/* Protected Routes (Authenticated Users) */}
         <Route element={<ProtectedRoute />}>
           <Route path="/articles/create" element={<CreateArticlePage />} />
           <Route path="/articles/edit/:idOrSlug" element={<EditArticlePage />} />
           <Route path="/my-articles" element={<MyArticlesPage />} />
         </Route>
+
+        {/* Public Dynamic Article Detail Route */}
+        <Route path="/articles/:idOrSlug" element={<ArticleDetailPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signin" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/register" element={<SignupPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
         {/* 404 Catch-All */}
         <Route path="*" element={<NotFoundPage />} />

@@ -9,7 +9,8 @@ export default function MyArticlesPage() {
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [deletingId, setDeletingId] = useState(null);
+  const [articleToDelete, setArticleToDelete] = useState(null);
+  const [actionMessage, setActionMessage] = useState({ type: "", text: "" });
 
   const fetchMyArticles = async () => {
     setIsLoading(true);
@@ -30,17 +31,26 @@ export default function MyArticlesPage() {
     fetchMyArticles();
   }, []);
 
-  const handleDelete = async (idOrSlug) => {
-    if (!window.confirm("Are you sure you want to permanently delete this article?")) {
-      return;
-    }
+  const confirmDelete = async () => {
+    if (!articleToDelete) return;
 
+    const idOrSlug = articleToDelete.slug || articleToDelete._id;
     setDeletingId(idOrSlug);
+    setActionMessage({ type: "", text: "" });
+
     try {
       await articleApi.delete(idOrSlug);
       setArticles((prev) => prev.filter((a) => a.slug !== idOrSlug && a._id !== idOrSlug));
+      setActionMessage({
+        type: "success",
+        text: `Article "${articleToDelete.title}" was successfully deleted.`,
+      });
+      setArticleToDelete(null);
     } catch (err) {
-      alert(err.message || "Failed to delete article");
+      setActionMessage({
+        type: "error",
+        text: err.message || "Failed to delete the article.",
+      });
     } finally {
       setDeletingId(null);
     }
@@ -67,6 +77,26 @@ export default function MyArticlesPage() {
           </Button>
         </Link>
       </div>
+
+      {/* Action Notification Banner */}
+      {actionMessage.text && (
+        <div
+          className={`p-4 rounded-xl text-xs font-semibold flex items-center justify-between gap-3 border ${
+            actionMessage.type === "success"
+              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+              : "bg-rose-50 text-rose-800 border-rose-200"
+          }`}
+        >
+          <span>{actionMessage.text}</span>
+          <button
+            type="button"
+            onClick={() => setActionMessage({ type: "", text: "" })}
+            className="text-slate-400 hover:text-slate-700"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Content */}
       {isLoading ? (
@@ -158,11 +188,10 @@ export default function MyArticlesPage() {
                           </Link>
                           <button
                             type="button"
-                            disabled={deletingId === articleSlug}
-                            onClick={() => handleDelete(articleSlug)}
-                            className="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50"
+                            onClick={() => setArticleToDelete(article)}
+                            className="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
                           >
-                            {deletingId === articleSlug ? "Deleting..." : "Delete"}
+                            Delete
                           </button>
                         </div>
                       </td>
@@ -171,6 +200,45 @@ export default function MyArticlesPage() {
                 })}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {articleToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-5 animate-fadeIn">
+            <div className="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-bold text-slate-900">Delete this article?</h3>
+              <p className="text-sm text-slate-600">
+                Are you sure you want to delete <strong>"{articleToDelete.title}"</strong>? This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                size="md"
+                fullWidth
+                disabled={Boolean(deletingId)}
+                onClick={() => setArticleToDelete(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                size="md"
+                fullWidth
+                loading={Boolean(deletingId)}
+                onClick={confirmDelete}
+              >
+                Delete Article
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -118,7 +118,7 @@ export const getMyArticles = async (req, res, next) => {
 
 /**
  * @route   GET /api/articles/:idOrSlug
- * @desc    Get single article by ID or slug (increments view count)
+ * @desc    Get single article by ID or slug (increments view count for published)
  * @access  Public (drafts restricted to author/admin)
  */
 export const getArticleByIdOrSlug = async (req, res, next) => {
@@ -132,12 +132,7 @@ export const getArticleByIdOrSlug = async (req, res, next) => {
       query = { slug: idOrSlug };
     }
 
-    // Atomically increment view count and populate author
-    const article = await Article.findOneAndUpdate(
-      query,
-      { $inc: { viewCount: 1 } },
-      { new: true }
-    ).populate("author", "name email avatar role bio");
+    const article = await Article.findOne(query).populate("author", "name email avatar role bio");
 
     if (!article) {
       return res.status(404).json({
@@ -146,9 +141,9 @@ export const getArticleByIdOrSlug = async (req, res, next) => {
       });
     }
 
-    // If draft, ensure requesting user is author or admin (if authenticated)
+    // If draft, ensure requesting user is author or admin
     if (article.status === "draft") {
-      const isAuthor = req.user && article.author._id.toString() === req.user._id.toString();
+      const isAuthor = req.user && String(article.author._id || article.author) === String(req.user._id);
       const isAdmin = req.user && req.user.role === "admin";
 
       if (!isAuthor && !isAdmin) {
@@ -157,6 +152,10 @@ export const getArticleByIdOrSlug = async (req, res, next) => {
           message: "Article not found",
         });
       }
+    } else {
+      // Only increment view count for published articles
+      article.viewCount = (article.viewCount || 0) + 1;
+      await Article.updateOne({ _id: article._id }, { $inc: { viewCount: 1 } });
     }
 
     res.status(200).json({
@@ -186,7 +185,7 @@ export const updateArticle = async (req, res, next) => {
     }
 
     // Check authorization: must be the author or an admin
-    const isAuthor = article.author.toString() === req.user._id.toString();
+    const isAuthor = String(article.author._id || article.author) === String(req.user._id);
     const isAdmin = req.user.role === "admin";
 
     if (!isAuthor && !isAdmin) {
@@ -198,8 +197,26 @@ export const updateArticle = async (req, res, next) => {
 
     const { title, content, excerpt, thumbnail, category, tags, status } = req.body;
 
-    if (title !== undefined) article.title = title.trim();
-    if (content !== undefined) article.content = content.trim();
+    if (title !== undefined) {
+      if (!title.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Article title cannot be empty.",
+        });
+      }
+      article.title = title.trim();
+    }
+
+    if (content !== undefined) {
+      if (!content.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Article content cannot be empty.",
+        });
+      }
+      article.content = content.trim();
+    }
+
     if (excerpt !== undefined) article.excerpt = excerpt.trim();
     if (thumbnail !== undefined) article.thumbnail = thumbnail.trim();
     if (category !== undefined) article.category = category.trim();
@@ -246,7 +263,7 @@ export const deleteArticle = async (req, res, next) => {
     }
 
     // Check authorization: must be the author or an admin
-    const isAuthor = article.author.toString() === req.user._id.toString();
+    const isAuthor = String(article.author._id || article.author) === String(req.user._id);
     const isAdmin = req.user.role === "admin";
 
     if (!isAuthor && !isAdmin) {
