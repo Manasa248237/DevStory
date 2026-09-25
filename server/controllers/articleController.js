@@ -69,25 +69,54 @@ export const createArticle = async (req, res, next) => {
 
 /**
  * @route   GET /api/articles
- * @desc    Get all published articles
+ * @desc    Get all published articles with search, category filtering, and pagination
  * @access  Public
  */
 export const getAllArticles = async (req, res, next) => {
   try {
+    // Strictly restrict to published articles for public endpoints
     const filter = { status: "published" };
 
-    // Optional category query filter
-    if (req.query.category && req.query.category !== "All") {
-      filter.category = req.query.category;
+    // 1. Category filter
+    if (req.query.category && req.query.category.trim() !== "" && req.query.category !== "All") {
+      filter.category = req.query.category.trim();
     }
+
+    // 2. Search query filter (matches title, excerpt, or content case-insensitively)
+    const searchTerm = req.query.search || req.query.q || req.query.keyword;
+    if (searchTerm && typeof searchTerm === "string" && searchTerm.trim() !== "") {
+      const sanitized = searchTerm.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const searchRegex = new RegExp(sanitized, "i");
+      filter.$or = [
+        { title: searchRegex },
+        { excerpt: searchRegex },
+        { content: searchRegex },
+      ];
+    }
+
+    // 3. Pagination setup
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit, 10) || 9));
+    const skip = (page - 1) * limit;
+
+    const total = await Article.countDocuments(filter);
+    const totalPages = Math.ceil(total / limit) || 1;
 
     const articles = await Article.find(filter)
       .populate("author", "name email avatar role")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
       count: articles.length,
+      total,
+      page,
+      totalPages,
+      limit,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
       articles,
     });
   } catch (error) {

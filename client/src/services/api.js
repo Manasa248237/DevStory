@@ -88,7 +88,16 @@ export const articleApi = {
   getAll: (params = {}) => {
     const query = new URLSearchParams();
     if (params.category && params.category !== "All") {
-      query.append("category", params.category);
+      query.append("category", params.category.trim());
+    }
+    if (params.search && typeof params.search === "string" && params.search.trim()) {
+      query.append("search", params.search.trim());
+    }
+    if (params.page) {
+      query.append("page", params.page);
+    }
+    if (params.limit) {
+      query.append("limit", params.limit);
     }
     const queryString = query.toString() ? `?${query.toString()}` : "";
     return apiRequest(`/articles${queryString}`, { method: "GET" });
