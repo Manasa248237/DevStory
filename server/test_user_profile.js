@@ -13,7 +13,7 @@ import User from "./models/User.js";
 import Article from "./models/Article.js";
 import { connectDB } from "./config/db.js";
 
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = process.env.TEST_API_URL || "http://localhost:5000/api";
 
 async function runTests() {
   console.log("=================================================");
