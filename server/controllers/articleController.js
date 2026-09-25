@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Article from "../models/Article.js";
+import Comment from "../models/Comment.js";
 
 /**
  * Helper to find article by either MongoDB ObjectId or unique slug
@@ -301,6 +302,9 @@ export const deleteArticle = async (req, res, next) => {
         message: "Forbidden: You are not authorized to delete this article.",
       });
     }
+
+    // Cascade delete associated comments
+    await Comment.deleteMany({ article: article._id });
 
     await article.deleteOne();
 
