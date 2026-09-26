@@ -10,6 +10,8 @@ import {
   AlertTriangle,
   Sparkles,
   Layers,
+  ArrowUpRight,
+  BookOpen,
 } from "lucide-react";
 import { articleApi } from "../services/api.js";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -22,8 +24,9 @@ import CommentSection from "../components/CommentSection.jsx";
 import LikeButton from "../components/LikeButton.jsx";
 import BookmarkButton from "../components/BookmarkButton.jsx";
 import SocialShare from "../components/SocialShare.jsx";
-import { DEFAULT_ARTICLE_THUMBNAIL } from "../components/ArticleCard.jsx";
+import ArticleCard, { DEFAULT_ARTICLE_THUMBNAIL } from "../components/ArticleCard.jsx";
 import useDocumentMeta from "../hooks/useDocumentMeta.js";
+import { calculateReadingTime } from "../utils/readingTime.js";
 
 export default function ArticleDetailPage() {
   const { idOrSlug } = useParams();
@@ -37,6 +40,10 @@ export default function ArticleDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+
+  const [relatedArticles, setRelatedArticles] = useState([]);
+  const [isLoadingRelated, setIsLoadingRelated] = useState(false);
+  const [relatedError, setRelatedError] = useState(null);
 
   // Dynamic SEO, Open Graph & Twitter metadata
   useDocumentMeta(
@@ -53,8 +60,15 @@ export default function ArticleDetailPage() {
           image: article.thumbnail || DEFAULT_ARTICLE_THUMBNAIL,
           type: "article",
           author: article.author?.name || "DevStory Author",
+          section: article.category || "Technology",
           publishedTime: article.createdAt,
+          modifiedTime: article.updatedAt,
           tags: article.tags,
+        }
+      : error
+      ? {
+          title: "Article Not Found",
+          description: "The requested article could not be found on DevStory.",
         }
       : {
           title: "Loading Article...",
@@ -69,6 +83,10 @@ export default function ArticleDetailPage() {
   }, [article?.thumbnail]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     const fetchArticle = async () => {
       setIsLoading(true);
       setError(null);
@@ -76,6 +94,13 @@ export default function ArticleDetailPage() {
         const response = await articleApi.getByIdOrSlug(idOrSlug);
         if (response.success && response.article) {
           setArticle(response.article);
+          
+          // Seamless SEO URL canonicalization: if accessed via MongoDB ObjectId, replace with clean slug in address bar
+          if (response.article.slug && idOrSlug !== response.article.slug) {
+            navigate(`/articles/${response.article.slug}`, { replace: true });
+          }
+
+          fetchRelated(response.article.slug || response.article._id || idOrSlug);
         } else {
           setError("Article not found.");
         }
@@ -83,6 +108,25 @@ export default function ArticleDetailPage() {
         setError(err.message || "Failed to load the article.");
       } finally {
         setIsLoading(false);
+      }
+    };
+
+    const fetchRelated = async (targetIdOrSlug) => {
+      setIsLoadingRelated(true);
+      setRelatedError(null);
+      try {
+        const res = await articleApi.getRelated(targetIdOrSlug, 3);
+        if (res.success && Array.isArray(res.articles)) {
+          setRelatedArticles(res.articles);
+        } else {
+          setRelatedArticles([]);
+        }
+      } catch (err) {
+        console.error("Failed to load related articles:", err);
+        setRelatedError(err.message || "Failed to load related articles.");
+        setRelatedArticles([]);
+      } finally {
+        setIsLoadingRelated(false);
       }
     };
 
@@ -137,10 +181,8 @@ export default function ArticleDetailPage() {
       })
     : "Recently";
 
-  // Clean word count for read time estimation
-  const plainText = (article.content || "").replace(/<[^>]*>/gm, " ").trim();
-  const wordCount = plainText ? plainText.split(/\s+/).length : 100;
-  const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
+  // Estimated reading time
+  const readTime = article.readTime || calculateReadingTime(article.content);
 
   // Detect whether content contains HTML tags
   const isHtmlContent = /<[a-z][\s\S]*>/i.test(article.content || "");
@@ -214,8 +256,8 @@ export default function ArticleDetailPage() {
                   <>
                     <span>•</span>
                     <span className="inline-flex items-center gap-1 text-slate-400 dark:text-slate-500">
-                      <Eye className="w-3 h-3" />
-                      {article.viewCount} views
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>{article.viewCount.toLocaleString()} {article.viewCount === 1 ? "view" : "views"}</span>
                     </span>
                   </>
                 )}
@@ -235,10 +277,12 @@ export default function ArticleDetailPage() {
               size="md"
               showText={true}
             />
-            <SocialShare
-              article={article}
-              variant="compact"
-            />
+            {article.status === "published" && (
+              <SocialShare
+                article={article}
+                variant="compact"
+              />
+            )}
 
             {canManage && (
               <div className="flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-slate-800">
@@ -306,10 +350,69 @@ export default function ArticleDetailPage() {
         </div>
       )}
 
-      {/* Full Social Sharing Section */}
-      <div className="pt-8 border-t border-slate-200/80 dark:border-slate-800">
-        <SocialShare article={article} variant="full" />
-      </div>
+      {/* Full Social Sharing Section (Published Articles Only) */}
+      {article.status === "published" && (
+        <div className="pt-8 border-t border-slate-200/80 dark:border-slate-800">
+          <SocialShare article={article} variant="full" />
+        </div>
+      )}
+
+      {/* Related Articles Section */}
+      <section className="pt-10 border-t border-slate-200/80 dark:border-slate-800 space-y-6">
+        <div className="flex items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Recommended Stories</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Related Articles
+            </h2>
+          </div>
+          {article.category && (
+            <Link
+              to={`/articles?category=${encodeURIComponent(article.category)}`}
+              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors hidden sm:inline-flex items-center gap-1"
+            >
+              <span>More in {article.category}</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
+        </div>
+
+        {isLoadingRelated ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((n) => (
+              <div
+                key={n}
+                className="h-80 rounded-3xl bg-slate-100 dark:bg-slate-800/60 animate-pulse border border-slate-200/60 dark:border-slate-700/60"
+              />
+            ))}
+          </div>
+        ) : relatedError ? (
+          <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-300">
+            {relatedError}
+          </div>
+        ) : relatedArticles.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedArticles.map((relArticle) => (
+              <ArticleCard key={relArticle._id || relArticle.slug} article={relArticle} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 px-6 rounded-3xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-3">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              No related articles found in <strong>{article.category || "this topic"}</strong> yet.
+            </p>
+            <Link to="/articles">
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <span>Browse All Articles</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Button>
+            </Link>
+          </div>
+        )}
+      </section>
 
       {/* Comments Section */}
       <div className="pt-10 border-t border-slate-200/80 dark:border-slate-800">

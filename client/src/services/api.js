@@ -110,24 +110,33 @@ export const articleApi = {
   getByIdOrSlug: (idOrSlug) =>
     apiRequest(`/articles/${idOrSlug}`, { method: "GET" }),
 
+  recordView: (idOrSlug) =>
+    apiRequest(`/articles/${idOrSlug}/view`, { method: "POST" }),
+
+  getRelated: (idOrSlug, limit = 3) =>
+    apiRequest(`/articles/${idOrSlug}/related?limit=${limit}`, { method: "GET" }),
+
   getMyArticles: () =>
     apiRequest("/articles/my-articles", { method: "GET" }),
 
-  create: (articleData) =>
+  create: (articleData, options = {}) =>
     apiRequest("/articles", {
       method: "POST",
       body: JSON.stringify(articleData),
+      ...options,
     }),
 
-  update: (idOrSlug, articleData) =>
+  update: (idOrSlug, articleData, options = {}) =>
     apiRequest(`/articles/${idOrSlug}`, {
       method: "PUT",
       body: JSON.stringify(articleData),
+      ...options,
     }),
 
-  delete: (idOrSlug) =>
+  delete: (idOrSlug, options = {}) =>
     apiRequest(`/articles/${idOrSlug}`, {
       method: "DELETE",
+      ...options,
     }),
 };
 

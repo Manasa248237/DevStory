@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { generateShareLinks, copyToClipboard } from "../utils/socialShare.js";
+
+export { generateShareLinks, copyToClipboard };
 
 /**
  * Reusable Social Share Component for DevStory
- * Supports Browser Web Share API (navigator.share), WhatsApp, LinkedIn, X (Twitter), Facebook, and Copy Link.
- * 
+ * Supports WhatsApp, LinkedIn, X, Facebook, Copy Link, and Browser Web Share API.
+ *
  * Variants:
- * - 'bar': Rich post-article showcase card with primary native share (when available), platform pills, and quick copy button.
- * - 'compact': Header action bar button with 1-click native share and interactive floating dropdown.
+ * - 'bar' / 'full': Rich showcase card displayed at the bottom of published articles.
+ * - 'compact': Header action button with quick device share and interactive dropdown.
  */
 export default function SocialShare({
   article,
@@ -44,24 +47,7 @@ export default function SocialShare({
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [isDropdownOpen]);
 
-  const articleTitle = article?.title || "DevStory Engineering Article";
-  const articleExcerpt = article?.excerpt || "Read this in-depth perspective on modern software engineering on DevStory.";
-  const articleTags = Array.isArray(article?.tags) && article.tags.length > 0
-    ? article.tags.map((t) => t.replace(/[^a-zA-Z0-9]/g, "")).filter(Boolean).join(",")
-    : "DevStory,TechBlog,WebDev";
-
-  // Share Intent URLs
-  const shareLinks = {
-    whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(
-      `*${articleTitle}*\n${articleExcerpt}\n\n${currentUrl}`
-    )}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`,
-    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      articleTitle
-    )}&url=${encodeURIComponent(currentUrl)}&hashtags=${encodeURIComponent(articleTags)}`,
-    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`,
-    reddit: `https://www.reddit.com/submit?url=${encodeURIComponent(currentUrl)}&title=${encodeURIComponent(articleTitle)}`,
-  };
+  const shareLinks = generateShareLinks(article, currentUrl);
 
   const openShareWindow = (e, platform, url) => {
     e?.preventDefault?.();
@@ -70,8 +56,8 @@ export default function SocialShare({
 
     const width = 620;
     const height = 580;
-    const left = Math.max(0, (window.innerWidth - width) / 2 + window.screenX);
-    const top = Math.max(0, (window.innerHeight - height) / 2 + window.screenY);
+    const left = Math.max(0, (window.innerWidth - width) / 2 + (window.screenX || 0));
+    const top = Math.max(0, (window.innerHeight - height) / 2 + (window.screenY || 0));
 
     window.open(
       url,
@@ -84,25 +70,11 @@ export default function SocialShare({
     e?.preventDefault?.();
     e?.stopPropagation?.();
 
-    if (!currentUrl) return;
+    const targetUrl = currentUrl || (typeof window !== "undefined" ? window.location.href : "");
+    if (!targetUrl) return;
 
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(currentUrl);
-      } else {
-        // Fallback for non-secure context or older browser environments
-        const textArea = document.createElement("textarea");
-        textArea.value = currentUrl;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand("copy");
-        textArea.remove();
-      }
-
+      await copyToClipboard(targetUrl);
       setCopied(true);
       setCopyError(false);
       setTimeout(() => setCopied(false), 2500);
@@ -125,28 +97,24 @@ export default function SocialShare({
     }
 
     const shareData = {
-      title: articleTitle,
-      text: articleExcerpt,
-      url: currentUrl,
+      title: article?.title || "DevStory Article",
+      text: article?.excerpt || "Check out this engineering article on DevStory.",
+      url: currentUrl || window.location.href,
     };
 
     try {
       if (navigator.canShare && !navigator.canShare(shareData)) {
         await navigator.share({
-          title: articleTitle,
-          url: currentUrl,
+          title: shareData.title,
+          url: shareData.url,
         });
       } else {
         await navigator.share(shareData);
       }
       setIsDropdownOpen(false);
     } catch (err) {
-      // 1. User dismissed/cancelled dialog -> do not display error
-      if (err.name === "AbortError") {
-        return;
-      }
-      // 2. Unexpected failure -> fallback to dropdown menu gracefully
-      console.warn("Native Web Share failed, showing menu fallback:", err);
+      if (err.name === "AbortError") return; // User cancelled
+      console.warn("Native Web Share failed, falling back to menu:", err);
       setIsDropdownOpen(true);
     }
   };
@@ -158,7 +126,7 @@ export default function SocialShare({
     return (
       <div className={`relative inline-flex items-center social-share-dropdown-container ${className}`}>
         {canNativeShare ? (
-          /* Split Button for browsers supporting Web Share API */
+          /* Split Button for devices supporting Web Share API */
           <div className="inline-flex items-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-hidden">
             <button
               type="button"
@@ -179,7 +147,7 @@ export default function SocialShare({
                 e.stopPropagation();
                 setIsDropdownOpen((prev) => !prev);
               }}
-              aria-label="Open more sharing platforms"
+              aria-label="Open more sharing options"
               title="More sharing options"
               className="px-2 py-2 border-l border-slate-200 dark:border-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             >
@@ -259,10 +227,10 @@ export default function SocialShare({
               <span>LinkedIn</span>
             </a>
 
-            {/* X (Twitter) */}
+            {/* X */}
             <a
-              href={shareLinks.twitter}
-              onClick={(e) => openShareWindow(e, "twitter", shareLinks.twitter)}
+              href={shareLinks.x}
+              onClick={(e) => openShareWindow(e, "x", shareLinks.x)}
               className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-white transition-colors"
             >
               <span className="w-6 h-6 rounded-lg bg-slate-900/10 dark:bg-white/10 text-slate-900 dark:text-slate-100 flex items-center justify-center shrink-0">
@@ -270,7 +238,7 @@ export default function SocialShare({
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
               </span>
-              <span>X (Twitter)</span>
+              <span>X</span>
             </a>
 
             {/* Facebook */}
@@ -314,7 +282,7 @@ export default function SocialShare({
   }
 
   // -------------------------------------------------------------
-  // VARIANT 2: BAR / SHOWCASE CARD (Bottom of Article Detail Page)
+  // VARIANT 2: BAR / SHOWCASE CARD (Bottom of Published Article Detail Page)
   // -------------------------------------------------------------
   return (
     <section
@@ -340,12 +308,12 @@ export default function SocialShare({
 
         {/* Action Buttons Cluster */}
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Primary Native Share Button (when supported by browser) */}
+          {/* Primary Native Share Button (when supported by device) */}
           {canNativeShare && (
             <button
               type="button"
               onClick={handleNativeShare}
-              aria-label="Share article via device native share"
+              aria-label="Share article via device native apps"
               title="Share story via your device's native apps"
               className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all duration-200 shadow-xs shadow-indigo-600/25 active:scale-95 cursor-pointer"
             >
@@ -388,20 +356,20 @@ export default function SocialShare({
             <span>LinkedIn</span>
           </a>
 
-          {/* X (Twitter) */}
+          {/* X */}
           <a
-            href={shareLinks.twitter}
-            onClick={(e) => openShareWindow(e, "twitter", shareLinks.twitter)}
+            href={shareLinks.x}
+            onClick={(e) => openShareWindow(e, "x", shareLinks.x)}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Share story on X (Twitter)"
-            title="Share on X (Twitter)"
+            aria-label="Share story on X"
+            title="Share on X"
             className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:border-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800 text-xs font-bold transition-all duration-200 shadow-xs active:scale-95 cursor-pointer"
           >
             <svg className="w-4 h-4 fill-slate-900 dark:fill-slate-100 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
             </svg>
-            <span>X (Twitter)</span>
+            <span>X</span>
           </a>
 
           {/* Facebook */}

@@ -5,6 +5,7 @@ import LikeButton from "./LikeButton.jsx";
 import BookmarkButton from "./BookmarkButton.jsx";
 import SpotlightCard from "./ui/SpotlightCard.jsx";
 import Badge from "./ui/Badge.jsx";
+import { calculateReadingTime } from "../utils/readingTime.js";
 
 export const DEFAULT_ARTICLE_THUMBNAIL =
   "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80";
@@ -47,10 +48,8 @@ export default function ArticleCard({ article }) {
       })
     : date || "Recently";
 
-  // Estimated read time
-  const calculatedReadTime =
-    readTime ||
-    `${Math.max(1, Math.ceil((content.split(/\s+/).length || 100) / 200))} min read`;
+  // Estimated read time: use stored readTime or calculate from content
+  const calculatedReadTime = readTime || calculateReadingTime(content);
 
   // Dynamic category badge colors
   const categoryVariants = {

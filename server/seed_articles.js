@@ -27,6 +27,8 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
+import { calculateReadingTime } from "./utils/readingTime.js";
+
 // Article Schema
 const articleSchema = new mongoose.Schema(
   {
@@ -34,6 +36,7 @@ const articleSchema = new mongoose.Schema(
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     content: { type: String, required: true },
     excerpt: { type: String, trim: true, default: "" },
+    readTime: { type: String, default: "1 min read" },
     thumbnail: { type: String, default: "" },
     category: { type: String, required: true, trim: true },
     tags: [{ type: String, trim: true }],
@@ -599,6 +602,7 @@ async function seed() {
       const author = createdAuthors[articleData.authorIndex] || createdAuthors[0];
 
       let article = await Article.findOne({ slug: articleData.slug });
+      const calculatedReadTime = calculateReadingTime(articleData.content);
       if (!article) {
         article = await Article.create({
           title: articleData.title,
@@ -607,26 +611,28 @@ async function seed() {
           author: author._id,
           thumbnail: articleData.thumbnail,
           excerpt: articleData.excerpt,
+          readTime: calculatedReadTime,
           tags: articleData.tags,
           content: articleData.content,
           status: "published",
           viewCount: articleData.viewCount,
           likesCount: articleData.likesCount,
         });
-        console.log(`Created rich article: "${article.title}"`);
+        console.log(`Created rich article: "${article.title}" (${calculatedReadTime})`);
       } else {
         article.title = articleData.title;
         article.category = articleData.category;
         article.author = author._id;
         article.thumbnail = articleData.thumbnail;
         article.excerpt = articleData.excerpt;
+        article.readTime = calculatedReadTime;
         article.tags = articleData.tags;
         article.content = articleData.content;
         article.status = "published";
         article.viewCount = articleData.viewCount;
         article.likesCount = articleData.likesCount;
         await article.save();
-        console.log(`Updated rich article: "${article.title}"`);
+        console.log(`Updated rich article: "${article.title}" (${calculatedReadTime})`);
       }
 
       // 4. Seed sample discussion comments if none exist

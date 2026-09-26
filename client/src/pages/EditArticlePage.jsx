@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Edit3,
@@ -9,6 +9,8 @@ import {
   FolderOpen,
   Eye,
   ArrowLeft,
+  Clock,
+  Trash2,
 } from "lucide-react";
 import { articleApi } from "../services/api.js";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -18,6 +20,8 @@ import Loading from "../components/Loading.jsx";
 import ErrorMessage from "../components/ErrorMessage.jsx";
 import RichTextEditor from "../components/RichTextEditor.jsx";
 import ImageUpload from "../components/ImageUpload.jsx";
+import SaveStatusBadge from "../components/SaveStatusBadge.jsx";
+import useDraftAutoSave from "../hooks/useDraftAutoSave.js";
 import useDocumentMeta from "../hooks/useDocumentMeta.js";
 
 export default function EditArticlePage() {
@@ -46,6 +50,7 @@ export default function EditArticlePage() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState("");
+  const originalArticleRef = useRef(null);
 
   const categories = [
     "Technology",
@@ -57,6 +62,46 @@ export default function EditArticlePage() {
     "Productivity",
     "General",
   ];
+
+  // Auto-save handler for updating existing article/draft
+  const handleServerSave = useCallback(
+    async (data, _draftId, signal) => {
+      const payload = {
+        ...data,
+        tags: typeof data.tags === "string"
+          ? data.tags.split(",").map((t) => t.trim()).filter(Boolean)
+          : data.tags,
+      };
+
+      const response = await articleApi.update(idOrSlug, payload, { signal });
+      return {
+        draftId: response.article?._id || idOrSlug,
+        slug: response.article?.slug,
+      };
+    },
+    [idOrSlug]
+  );
+
+  const storageKey = user && idOrSlug ? `devstory_draft_edit_${idOrSlug}_${user.id || user._id}` : null;
+
+  const {
+    saveStatus,
+    lastSavedTime,
+    saveError,
+    draftRecovered,
+    forceSave,
+    clearDraft,
+    setDraftRecovered,
+  } = useDraftAutoSave({
+    storageKey,
+    formData,
+    setFormData,
+    onServerSave: handleServerSave,
+    enabled: Boolean(user && !isLoading && !loadError),
+    debounceMs: 1500,
+    minValidCheck: (data) =>
+      Boolean(data?.title?.trim()?.length >= 3 && data?.content?.replace(/<[^>]*>/gm, "")?.trim()?.length >= 5),
+  });
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -73,6 +118,8 @@ export default function EditArticlePage() {
             setIsLoading(false);
             return;
           }
+
+          originalArticleRef.current = art;
 
           setFormData({
             title: art.title || "",
@@ -118,6 +165,23 @@ export default function EditArticlePage() {
     if (apiError) setApiError("");
   };
 
+  const handleDiscardUnsaved = () => {
+    clearDraft();
+    if (originalArticleRef.current) {
+      const art = originalArticleRef.current;
+      setFormData({
+        title: art.title || "",
+        category: art.category || "General",
+        tags: Array.isArray(art.tags) ? art.tags.join(", ") : art.tags || "",
+        thumbnail: art.thumbnail || "",
+        excerpt: art.excerpt || "",
+        content: art.content || "",
+        status: art.status || "published",
+      });
+    }
+    setDraftRecovered(false);
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -153,14 +217,14 @@ export default function EditArticlePage() {
     try {
       const payload = {
         ...formData,
-        tags: formData.tags
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean),
+        tags: typeof formData.tags === "string"
+          ? formData.tags.split(",").map((t) => t.trim()).filter(Boolean)
+          : formData.tags,
       };
 
       const response = await articleApi.update(idOrSlug, payload);
       if (response.success && response.article) {
+        clearDraft(); // Clear cached draft on explicit save
         navigate(`/articles/${response.article.slug || response.article._id || idOrSlug}`);
       }
     } catch (err) {
@@ -193,19 +257,60 @@ export default function EditArticlePage() {
 
   return (
     <div className="max-w-4xl mx-auto py-4 space-y-8">
-      {/* Header */}
-      <div className="space-y-2">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider shadow-xs">
-          <Edit3 className="w-3.5 h-3.5" />
-          Editor
+      {/* Header with Save Status */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/80 text-indigo-700 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider shadow-xs">
+            <Edit3 className="w-3.5 h-3.5" />
+            Editor
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Edit Article
+          </h1>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            Update your article content, category classification, thumbnail, and publication status.
+          </p>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Edit Article
-        </h1>
-        <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-          Update your article content, category classification, thumbnail, and publication status.
-        </p>
+
+        {/* Live Auto-Save Status Badge */}
+        <div className="shrink-0 flex items-center gap-2">
+          <SaveStatusBadge
+            status={saveStatus}
+            lastSavedTime={lastSavedTime}
+            errorMessage={saveError}
+            onRetry={forceSave}
+          />
+        </div>
       </div>
+
+      {/* Recovered Draft Notice Banner */}
+      {draftRecovered && (
+        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-medium text-amber-900 dark:text-amber-200 shadow-2xs">
+          <div className="flex items-center gap-2.5">
+            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+            <span>
+              Unsaved changes from a previous session were restored.
+            </span>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setDraftRecovered(false)}
+              className="px-3 py-1 rounded-lg bg-amber-200/60 dark:bg-amber-800/60 hover:bg-amber-200 dark:hover:bg-amber-800 text-amber-900 dark:text-amber-100 transition-colors font-semibold cursor-pointer"
+            >
+              Keep Restored
+            </button>
+            <button
+              type="button"
+              onClick={handleDiscardUnsaved}
+              className="px-3 py-1 rounded-lg bg-white/80 dark:bg-slate-900/80 border border-amber-300 dark:border-amber-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 transition-colors font-semibold flex items-center gap-1 cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Reset to Server
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Server Error Alert */}
       {apiError && (
@@ -321,27 +426,38 @@ export default function EditArticlePage() {
         />
 
         {/* Action buttons */}
-        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            size="md"
-            onClick={() => navigate(-1)}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="primary"
-            size="md"
-            loading={isSubmitting}
-            disabled={isSubmitting}
-            className="gap-2 shadow-sm"
-          >
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Save Changes</span>
-          </Button>
+        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <SaveStatusBadge
+              status={saveStatus}
+              lastSavedTime={lastSavedTime}
+              errorMessage={saveError}
+              onRetry={forceSave}
+            />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              onClick={() => navigate(-1)}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              className="gap-2 shadow-sm"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Save Changes</span>
+            </Button>
+          </div>
         </div>
       </form>
     </div>

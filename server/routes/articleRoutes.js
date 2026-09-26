@@ -3,6 +3,8 @@ import {
   createArticle,
   getAllArticles,
   getArticleByIdOrSlug,
+  getRelatedArticles,
+  recordArticleView,
   updateArticle,
   deleteArticle,
   getMyArticles,
@@ -48,6 +50,12 @@ router.get("/:id/bookmark-status", protect, getArticleBookmarkStatus);
 router.post("/:id/bookmark", protect, bookmarkArticle);
 router.delete("/:id/bookmark", protect, unbookmarkArticle);
 router.post("/:id/bookmark/toggle", protect, toggleArticleBookmark);
+
+// View tracking route
+router.post("/:idOrSlug/view", optionalAuth, recordArticleView);
+
+// Related articles (Must be placed before /:idOrSlug catch-all)
+router.get("/:idOrSlug/related", getRelatedArticles);
 
 // Public / Semi-private route for single article (drafts visible only to author & admin)
 router.get("/:idOrSlug", optionalAuth, getArticleByIdOrSlug);

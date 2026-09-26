@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { calculateReadingTime } from "../utils/readingTime.js";
 
 const articleSchema = new mongoose.Schema(
   {
@@ -26,6 +27,10 @@ const articleSchema = new mongoose.Schema(
       trim: true,
       maxlength: [300, "Excerpt cannot exceed 300 characters"],
       default: "",
+    },
+    readTime: {
+      type: String,
+      default: "1 min read",
     },
     thumbnail: {
       type: String,
@@ -65,20 +70,31 @@ const articleSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
-// Function to generate slug from title
+// Function to generate clean URL-friendly slug from title
 export function generateSlug(title) {
-  return title
+  if (!title || typeof title !== "string") return "article";
+
+  const slug = title
+    .normalize("NFD") // Decompose accented letters (é -> e + combining accent)
+    .replace(/[\u0300-\u036f]/g, "") // Strip diacritics / accents
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, "") // Remove non-word characters except hyphens
-    .replace(/[\s_-]+/g, "-")  // Replace spaces and underscores with a single hyphen
-    .replace(/^-+|-+$/g, ""); // Strip leading and trailing hyphens
+    .replace(/&+/g, "and") // Replace & with 'and'
+    .replace(/[^\w\s-]/g, "") // Remove non-word characters except hyphens and whitespace
+    .replace(/[\s_-]+/g, "-")  // Replace whitespace and underscores with a single hyphen
+    .replace(/^-+|-+$/g, "") // Strip leading and trailing hyphens
+    .substring(0, 100) // Keep slug concise for SEO and URL standards
+    .replace(/-+$/, ""); // Strip trailing hyphen if substring cutoff created one
+
+  return slug || "article";
 }
 
-// Pre-validate hook to generate unique slug
+// Pre-validate hook to generate unique slug, excerpt, and reading time
 articleSchema.pre("validate", async function () {
   if (this.isModified("title") || !this.slug) {
     let baseSlug = generateSlug(this.title || "article");
@@ -108,6 +124,11 @@ articleSchema.pre("validate", async function () {
   if (!this.excerpt && this.content) {
     const plainText = this.content.replace(/<[^>]*>?/gm, "").trim();
     this.excerpt = plainText.length > 180 ? `${plainText.substring(0, 180)}...` : plainText;
+  }
+
+  // Auto-calculate reading time from content
+  if (this.isModified("content") || !this.readTime) {
+    this.readTime = calculateReadingTime(this.content || "");
   }
 });
 
