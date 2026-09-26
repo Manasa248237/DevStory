@@ -14,7 +14,8 @@
     "build:all": "npm run postinstall",
     "server": "node server/server.js",
     "server:dev": "npm --prefix server run dev",
-    "client:dev": "npm --prefix client run dev"
+    "client:dev": "npm --prefix client run dev",
+    "seed": "node server/seed_articles.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

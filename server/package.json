@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node server.js",
     "build": "npm install",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "seed": "node seed_articles.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
